@@ -2,13 +2,13 @@
 // Created by xcbosa on 2023/1/28.
 //
 
-#include "ResponseData.h"
+#include "TextResponseData.h"
 
 using namespace std;
 
 namespace xc {
     namespace utils {
-        ResponseData::ResponseData(int statusCode, string body): headers() {
+        TextResponseData::TextResponseData(int statusCode, string body): headers() {
             this->statusCode = statusCode;
             this->body = body;
             this->headers["Server"] = "XCHttpServer";
@@ -16,44 +16,44 @@ namespace xc {
             this->headers["Content-Type"] = "text/html";
         }
 
-        ResponseData::ResponseData(int statusCode, string body, string contentType):
-                ResponseData(statusCode, body) {
+        TextResponseData::TextResponseData(int statusCode, string body, string contentType):
+                TextResponseData(statusCode, body) {
             this->headers["Content-Type"] = contentType;
         }
 
-        void ResponseData::setHeader(string headerName, string value) {
+        void TextResponseData::setHeader(string headerName, string value) {
             this->headers[headerName] = value;
         }
 
-        void ResponseData::removeHeader(string headerName) {
+        void TextResponseData::removeHeader(string headerName) {
             this->headers[headerName] = nullptr;
         }
 
-        string ResponseData::getHeader(string headerName) {
+        string TextResponseData::getHeader(string headerName) {
             return this->headers[headerName];
         }
 
-        void ResponseData::setStatusCode(int statusCode) {
+        void TextResponseData::setStatusCode(int statusCode) {
             this->statusCode = statusCode;
         }
 
-        void ResponseData::setContentType(string mimeType) {
+        void TextResponseData::setContentType(string mimeType) {
             this->setHeader("Content-Type", mimeType);
         }
 
-        int ResponseData::getStatusCode() const {
+        int TextResponseData::getStatusCode() const {
             return this->statusCode;
         }
 
-        void ResponseData::setBody(string body) {
+        void TextResponseData::setBody(string body) {
             this->body = body;
         }
 
-        string ResponseData::getBody() {
+        string TextResponseData::getBody() {
             return this->body;
         }
 
-        void ResponseData::writeTo(::FILE *fp) const {
+        void TextResponseData::writeTo(::FILE *fp) const {
             ::fprintf(fp, "HTTP/1.0 %d FRPCWebUI\r\n", this->statusCode);
             for (auto item : this->headers) {
                 ::fprintf(fp, "%s: %s\r\n", item.first.c_str(), item.second.c_str());

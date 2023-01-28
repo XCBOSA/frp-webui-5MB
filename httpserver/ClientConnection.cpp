@@ -24,6 +24,13 @@ namespace xc {
         void ClientConnection::workLoop() {
             ::FILE *clRead = fdopen(this->sockFd, "r");
             ::FILE *clWrite = fdopen(dup(this->sockFd), "w");
+
+            struct timeval timeout = { conf::clientSocketTimeoutSeconds, 0 };
+            if (setsockopt(this->sockFd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) == -1) {
+                cleanUpAndDestroy();
+                return;
+            }
+
             this->clRead = clRead;
             this->clWrite = clWrite;
             char *requestBuff = (char *)::malloc(urlRequestBuffSize);
@@ -42,16 +49,58 @@ namespace xc {
             ptr = strtok_r(requestBuff, " ", &p);
             if (ptr != nullptr) {
                 method = string(ptr);
-                ptr = strtok_r(NULL, " ", &p);
+                ptr = strtok_r(p, " ", &p);
                 if (ptr != nullptr) {
                     url = string(ptr);
                 }
             }
 
-            if (method == "GET1") {
+            if (method == "GET" || method == "POST") {
+                map<string, string> headers;
+                ostringstream body;
 
-            } else if (method == "POST1") {
+                bool isHeader = true;
+                while (::fgets(requestBuff, urlRequestBuffSize, clRead)) {
+                    int len = ::strlen(requestBuff);
+                    char *lineBuff = (char *) ::malloc(len + 1), *pLineBuff = lineBuff;
+                    bool leftHasContext = false;
+                    for (int i = 0; i < len; i++) {
+                        if (requestBuff[i] == '\r' || requestBuff[i] == '\n') continue;
+                        if (requestBuff[i] == ' ' || requestBuff[i] == '\t') {
+                            if (leftHasContext) {
+                                *pLineBuff++ = requestBuff[i];
+                            }
+                        } else {
+                            leftHasContext = true;
+                            *pLineBuff++ = requestBuff[i];
+                        }
+                    }
+                    if (leftHasContext) {
+                        pLineBuff--;
+                        while (pLineBuff >= lineBuff && (*pLineBuff == ' ' || *pLineBuff == '\t')) {
+                            *pLineBuff = 0; // 从右往左，删掉右边的空白符
+                            pLineBuff--;
+                        }
+                    }
+                    if (::strlen(lineBuff) == 0) {
+                        isHeader = false;
+                        continue;
+                    }
+                    if (isHeader) {
+                        char *headerValue;
+                        char *headerName = strtok_r(lineBuff, ":", &headerValue);
+                        if (headerName != nullptr && headerValue != nullptr) {
+                            string name(headerName);
+                            string value(headerValue);
+                            headers[name] = value;
+                        }
+                    } else {
+                        body << lineBuff << endl;
+                    }
+                }
 
+                RequestData requestData(url, method, headers, body.str());
+                cout << "[HTTPServer] Received " << method << " Request URL = " << url << endl;
             } else {
                 conf::errorPage.applyReplacements(400, {
                     Replacement("errorCode", "400"),
@@ -61,7 +110,7 @@ namespace xc {
                 return;
             }
 
-            ResponseData(200, string(requestBuff)).writeTo(clWrite);
+            TextResponseData(200, string(requestBuff)).writeTo(clWrite);
             cleanUpAndDestroy();
             return;
         }

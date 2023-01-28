@@ -14,13 +14,13 @@ namespace xc {
         }
 
         FileResponseData::FileResponseData(int statusCode, string filePath, string contentType):
-                ResponseData(statusCode, "", contentType),
+                TextResponseData(statusCode, "", contentType),
                 filePath() {
             this->setFilePath(filePath);
         }
 
         FileResponseData::FileResponseData(int statusCode, string filePath, string contentType, vector<Replacement> replacements):
-                ResponseData(statusCode, "", contentType) {
+                TextResponseData(statusCode, "", contentType) {
             this->setFilePath(filePath, replacements);
         }
 

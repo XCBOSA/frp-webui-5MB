@@ -11,6 +11,9 @@ using namespace std;
 using namespace xc::utils;
 
 namespace xc::conf {
+    const int clientSocketTimeoutSeconds = 3;
+    const int mtu = 1536;
+
     const IncompleteFileResponseData errorPage(FileResponseData(500, "html/error.html", "text/html"));
 
     const auto errorPage400 = errorPage.applyReplacements(400, {

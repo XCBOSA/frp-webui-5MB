@@ -5,7 +5,7 @@
 #pragma once
 
 #include "utils-private.h"
-#include "ResponseData.h"
+#include "TextResponseData.h"
 
 using namespace std;
 
@@ -19,7 +19,7 @@ namespace xc {
             Replacement(string replace, string with);
         };
 
-        class FileResponseData: public ResponseData {
+        class FileResponseData: public TextResponseData {
         public:
             FileResponseData(int statusCode, string filePath, string contentType);
             FileResponseData(int statusCode, string filePath, string contentType, vector<Replacement> replacements);
