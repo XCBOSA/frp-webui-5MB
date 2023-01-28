@@ -18,7 +18,8 @@ namespace xc {
             if (this->httpDiscarded) {
                 delete responseData;
                 this->response = nullptr;
-                //delete this; // Todo: Memory Lake
+                delete this;
+                // Todo: Memory Lake
             }
         }
 

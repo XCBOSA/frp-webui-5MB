@@ -26,6 +26,7 @@ namespace xc {
                 taskQueueMutex.lock();
                 if (!taskQueue.empty()) {
                     RequestProcessTask task = *taskQueue.front();
+                    taskQueue.pop_front();
                     taskQueueMutex.unlock();
                     return task;
                 }
