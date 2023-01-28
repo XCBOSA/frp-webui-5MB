@@ -2,10 +2,11 @@
 // Created by xcbosa on 2023/1/28.
 //
 
-#ifndef FRPCWEBUI_RESPONSEDATA_H
-#define FRPCWEBUI_RESPONSEDATA_H
+#pragma once
 
-#include "../webui.h"
+#include "utils-private.h"
+
+using namespace std;
 
 namespace xc {
     namespace utils {
@@ -19,10 +20,10 @@ namespace xc {
             string getHeader(string headerName);
             void setContentType(string mimeType);
             void setStatusCode(int statusCode);
-            int getStatusCode();
+            int getStatusCode() const;
             void setBody(string body);
             string getBody();
-            void writeTo(::FILE *fp);
+            void writeTo(::FILE *fp) const;
         private:
             int statusCode;
             map<string, string> headers;
@@ -31,5 +32,3 @@ namespace xc {
 
     } // xc
 } // utils
-
-#endif //FRPCWEBUI_RESPONSEDATA_H

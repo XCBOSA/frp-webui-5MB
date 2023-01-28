@@ -4,10 +4,8 @@
 
 #include "HTTPServer.h"
 #include "ClientConnection.h"
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
+
+using namespace std;
 
 namespace xc {
     namespace httpserver {
@@ -25,14 +23,14 @@ namespace xc {
             serverAddress.sin_addr.s_addr = INADDR_ANY;
             bzero(&(serverAddress.sin_zero), 8);
             if (::bind(this->serverSocketFd, (struct sockaddr *)&serverAddress, sizeof(struct sockaddr)) == -1) {
-                cerr << "Unable to bind port" << this->bindPort << endl;
+                cerr << "Unable to bind port " << this->bindPort << endl;
                 assertx(0, "");
             }
             if (listen(this->serverSocketFd, 5) == -1) {
-                cerr << "Unable to bind port" << this->bindPort << endl;
+                cerr << "Unable to bind port " << this->bindPort << endl;
                 assertx(0, "");
             }
-            cout << "Bind to" << this->bindPort << endl;
+            cout << "Bind to 0.0.0.0:" << this->bindPort << endl;
             while (true) {
                 struct sockaddr_in clientAddress;
                 socklen_t clientAddressSize = sizeof(clientAddress);

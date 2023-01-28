@@ -3,4 +3,12 @@ project(FRPCWebUI)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(FRPCWebUI main.cpp httpserver/HTTPServer.cpp httpserver/HTTPServer.h webui.h httpserver/ClientConnection.cpp httpserver/ClientConnection.h utils/ResponseData.cpp utils/ResponseData.h utils/FileResponseData.cpp utils/FileResponseData.h utils/FileReader.cpp webuiconf.h)
+aux_source_directory(. DIR_SRCS)
+
+add_subdirectory(utils)
+add_subdirectory(httpserver)
+
+add_executable(FRPCWebUI ${DIR_SRCS})
+
+find_package(Threads)
+target_link_libraries(FRPCWebUI HttpServerUtils HttpServer ${CMAKE_THREAD_LIBS_INIT})

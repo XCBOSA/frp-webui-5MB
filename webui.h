@@ -2,8 +2,7 @@
 // Created by xcbosa on 2023/1/28.
 //
 
-#ifndef FRPCWEBUI_WEBUI_H
-#define FRPCWEBUI_WEBUI_H
+#pragma once
 
 #include <vector>
 #include <map>
@@ -19,12 +18,9 @@ using namespace std;
     if (!(expr)) { std::cerr << message << std::endl; exit(-1); }
 
 namespace xc {
-    constexpr int smallBuffSize = 32;
+    constexpr int urlRequestBuffSize = 65536;
 
     namespace utils {
         string contentsOfTextFile(string filePath);
     }
 }
-
-
-#endif //FRPCWEBUI_WEBUI_H

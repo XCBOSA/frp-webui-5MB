@@ -2,10 +2,12 @@
 // Created by xcbosa on 2023/1/28.
 //
 
-#ifndef FRPCWEBUI_FILERESPONSEDATA_H
-#define FRPCWEBUI_FILERESPONSEDATA_H
+#pragma once
 
+#include "utils-private.h"
 #include "ResponseData.h"
+
+using namespace std;
 
 namespace xc {
     namespace utils {
@@ -28,7 +30,14 @@ namespace xc {
             string filePath;
         };
 
+        class IncompleteFileResponseData {
+        public:
+            IncompleteFileResponseData(FileResponseData holdData);
+            FileResponseData applyReplacements(vector<Replacement> replacements) const;
+            FileResponseData applyReplacements(int statusCode, vector<Replacement> replacements) const;
+        private:
+            FileResponseData holdData;
+        };
+
     } // xc
 } // utils
-
-#endif //FRPCWEBUI_FILERESPONSEDATA_H

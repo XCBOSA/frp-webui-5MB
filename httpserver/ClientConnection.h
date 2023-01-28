@@ -2,13 +2,11 @@
 // Created by xcbosa on 2023/1/28.
 //
 
-#ifndef FRPCWEBUI_CLIENTCONNECTION_H
-#define FRPCWEBUI_CLIENTCONNECTION_H
+#pragma once
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
+#include "httpserver-private.h"
+
+using namespace std;
 
 namespace xc {
     namespace httpserver {
@@ -20,10 +18,12 @@ namespace xc {
         private:
             int sockFd;
             struct sockaddr_in address;
+            ::FILE *clRead;
+            ::FILE *clWrite;
+            char *requestBuff;
             void workLoop();
+            void cleanUpAndDestroy();
         };
 
     } // xc
 } // httpserver
-
-#endif //FRPCWEBUI_CLIENTCONNECTION_H

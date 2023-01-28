@@ -2,31 +2,29 @@
 // Created by xcbosa on 2023/1/28.
 //
 
-#ifndef FRPCWEBUI_WEBUICONF_H
-#define FRPCWEBUI_WEBUICONF_H
+#pragma once
 
 #include <vector>
-#include "utils/FileResponseData.h"
+#include "utils/utils.h"
 
 using namespace std;
+using namespace xc::utils;
 
 namespace xc::conf {
-    using namespace utils;
+    const IncompleteFileResponseData errorPage(FileResponseData(500, "html/error.html", "text/html"));
 
-    const FileResponseData errorPage400(400, "html/error.html", "text/html", {
-        Replacement("{{ERR_MSG}}", "请求格式错误，无法解析请求"),
-        Replacement("{{ERR_CODE}}", "400")
+    const auto errorPage400 = errorPage.applyReplacements(400, {
+        Replacement("errorMessage", "请求格式错误，无法解析请求"),
+        Replacement("errorCode", "400")
     });
 
-    const FileResponseData errorPage404(404, "html/error.html", "text/html", {
-        Replacement("{{ERR_MSG}}", "不存在指定的资源"),
-        Replacement("{{ERR_CODE}}", "404")
+    const auto errorPage404 = errorPage.applyReplacements(404, {
+        Replacement("errorMessage", "不存在指定的资源"),
+        Replacement("errorCode", "404")
     });
 
-    const FileResponseData errorPage500(500, "html/error.html", "text/html", {
-        Replacement("{{ERR_MSG}}", "服务器内部错误，可能是服务器访问量过大，请稍后重试"),
-        Replacement("{{ERR_CODE}}", "500")
+    const auto errorPage500 = errorPage.applyReplacements(500, {
+        Replacement("errorMessage", "服务器内部错误，可能是服务器访问量过大，请稍后重试"),
+        Replacement("errorCode", "500")
     });
 }
-
-#endif //FRPCWEBUI_WEBUICONF_H

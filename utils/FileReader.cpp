@@ -2,9 +2,9 @@
 // Created by xcbosa on 2023/1/28.
 //
 
-#include "../webui.h"
-#include <sstream>
-#include <fstream>
+#include "utils-private.h"
+
+using namespace std;
 
 namespace xc::utils {
     string contentsOfTextFile(string filePath) {

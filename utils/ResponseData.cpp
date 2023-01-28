@@ -4,6 +4,8 @@
 
 #include "ResponseData.h"
 
+using namespace std;
+
 namespace xc {
     namespace utils {
         ResponseData::ResponseData(int statusCode, string body): headers() {
@@ -39,7 +41,7 @@ namespace xc {
             this->setHeader("Content-Type", mimeType);
         }
 
-        int ResponseData::getStatusCode() {
+        int ResponseData::getStatusCode() const {
             return this->statusCode;
         }
 
@@ -51,7 +53,7 @@ namespace xc {
             return this->body;
         }
 
-        void ResponseData::writeTo(::FILE *fp) {
+        void ResponseData::writeTo(::FILE *fp) const {
             ::fprintf(fp, "HTTP/1.0 %d FRPCWebUI\r\n", this->statusCode);
             for (auto item : this->headers) {
                 ::fprintf(fp, "%s: %s\r\n", item.first.c_str(), item.second.c_str());

@@ -2,10 +2,11 @@
 // Created by xcbosa on 2023/1/28.
 //
 
-#ifndef FRPCWEBUI_HTTPSERVER_H
-#define FRPCWEBUI_HTTPSERVER_H
+#pragma once
 
-#include "../webui.h"
+#include "httpserver-private.h"
+
+using namespace std;
 
 namespace xc {
     namespace httpserver {
@@ -21,5 +22,3 @@ namespace xc {
 
     } // xc
 } // httpserver
-
-#endif //FRPCWEBUI_HTTPSERVER_H
