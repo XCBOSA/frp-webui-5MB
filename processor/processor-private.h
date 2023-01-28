@@ -19,3 +19,9 @@
 
 using namespace std;
 using namespace xc::utils;
+
+namespace xc::processor {
+    class ContentGenerator;
+    extern ContentGenerator *generators[];
+    extern int generatorsCnt;
+}

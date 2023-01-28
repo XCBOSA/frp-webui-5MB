@@ -6,12 +6,13 @@
 
 namespace xc {
     namespace processor {
-        extern vector<ContentGenerator *> generators;
+        ContentGenerator *generators[1024];
+        int generatorsCnt = 0;
 
         ContentGenerator::ContentGenerator(RequestCheckBlock checker, ContentGenerateBlock generator) {
             this->checker = checker;
             this->generator = generator;
-            generators.push_back(this);
+            generators[generatorsCnt++] = this;
         }
 
         bool ContentGenerator::matchRequest(RequestData request) {

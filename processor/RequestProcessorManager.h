@@ -16,6 +16,6 @@ namespace xc {
         void deleteTask(RequestProcessTask *task);
 
         /*从处理队列中取出一个，如果没有则等待*/
-        RequestProcessTask dequeueTaskSync();
+        RequestProcessTask *dequeueTaskSync();
     }
 }

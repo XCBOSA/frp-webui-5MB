@@ -37,6 +37,7 @@ namespace xc {
             this->clWrite = clWrite;
             char *requestBuff = (char *)::malloc(urlRequestBuffSize);
             this->requestBuff = requestBuff;
+
             ::fgets(requestBuff, urlRequestBuffSize, clRead);
 
             if (::strstr(requestBuff, "HTTP/") == NULL) {
@@ -62,6 +63,8 @@ namespace xc {
                 ostringstream body;
 
                 bool isHeader = true;
+                bool lastLineIsEmpty = false;
+                bool lastLineEmptyAndZero = false;
                 while (::fgets(requestBuff, urlRequestBuffSize, clRead)) {
                     int len = ::strlen(requestBuff);
                     char *lineBuff = (char *) ::malloc(len + 1), *pLineBuff = lineBuff;
@@ -86,7 +89,22 @@ namespace xc {
                     }
                     if (::strlen(lineBuff) == 0) {
                         isHeader = false;
+                        lastLineIsEmpty = true;
+                        if (lastLineEmptyAndZero) {
+                            break;
+                        } else {
+                            lastLineEmptyAndZero = false;
+                        }
+                        if (method == "GET") {
+                            break;
+                        }
                         continue;
+                    }
+                    if (lineBuff[0] == '0') {
+                        if (lastLineIsEmpty) {
+                            lastLineEmptyAndZero = true;
+                            lastLineIsEmpty = false;
+                        }
                     }
                     if (isHeader) {
                         char *headerValue;

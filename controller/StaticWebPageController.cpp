@@ -11,15 +11,7 @@ using namespace xc::processor;
 
 namespace xc::controller {
 
-    static ContentGenerator staticWebPageController([] (auto p) {
-        if (p.getMethod() != "GET") { return false; }
-        struct stat buffer;
-        string filePath = "html/" + p.getURL();
-        return stat(filePath.c_str(), &buffer) == 0;
-    }, [] (auto p) {
-        string filePath = "html/" + p.getURL();
-        return new BinaryResponseData(200, filePath, "");
-    });
+
 
 }
 

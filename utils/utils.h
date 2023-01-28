@@ -14,4 +14,5 @@ using namespace std;
 
 namespace xc::utils {
     string contentsOfTextFile(string filePath);
+    string mimeTypeOfFile(string filePath);
 }

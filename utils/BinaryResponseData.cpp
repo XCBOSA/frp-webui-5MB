@@ -57,7 +57,7 @@ namespace xc {
                 if (inputFile) {
                     ::uint8_t buff[mtu];
                     long readPerPack = 0;
-                    while ((readPerPack = ::fread(buff, 1, mtu, inputFile)) == mtu) {
+                    while ((readPerPack = ::fread(buff, 1, mtu, inputFile)) > 0) {
                         ::fwrite(buff, 1, readPerPack, fp);
                     }
                 } else {

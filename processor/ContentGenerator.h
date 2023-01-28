@@ -7,6 +7,13 @@
 #include "processor-private.h"
 #include "../utils/utils.h"
 
+#define __merge_body(a, b) a ## b
+#define __merge(a, b) __merge_body(a, b)
+#define __uniqueVarName(name) __merge(name, __LINE__)
+
+#define ContentGeneratorDefine(cond, eval) \
+const ContentGenerator __uniqueVarName(AutoContentGenerator)([] (auto request) { cond; }, [] (auto request) { eval; });
+
 using namespace std;
 
 namespace xc {

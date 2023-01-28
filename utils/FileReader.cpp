@@ -20,4 +20,18 @@ namespace xc::utils {
         fin.close();
         return str;
     }
+
+    string mimeTypeOfFile(string filePath) {
+        std::filesystem::path p(filePath);
+        string ext = p.extension();
+        auto cit = conf::fileExtensionToMimeTypes.find(ext);
+        if (cit != conf::fileExtensionToMimeTypes.end()) {
+            return cit->second;
+        }
+        cit = conf::fileExtensionToMimeTypes.find("default");
+        if (cit != conf::fileExtensionToMimeTypes.end()) {
+            return cit->second;
+        }
+        return "data";
+    }
 }

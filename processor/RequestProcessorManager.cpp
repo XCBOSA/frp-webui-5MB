@@ -21,11 +21,11 @@ namespace xc {
             taskQueueMutex.unlock();
         }
 
-        RequestProcessTask dequeueTaskSync() {
+        RequestProcessTask *dequeueTaskSync() {
             while (true) {
                 taskQueueMutex.lock();
                 if (!taskQueue.empty()) {
-                    RequestProcessTask task = *taskQueue.front();
+                    RequestProcessTask *task = taskQueue.front();
                     taskQueue.pop_front();
                     taskQueueMutex.unlock();
                     return task;

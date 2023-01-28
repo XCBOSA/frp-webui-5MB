@@ -9,14 +9,13 @@
 namespace xc {
     namespace processor {
 
-        vector<ContentGenerator *> generators;
-
         void RequestProcessWorker::workerLoop() {
             while (true) {
-                RequestProcessTask task = processor::dequeueTaskSync();
+                RequestProcessTask *task = processor::dequeueTaskSync();
                 ContentGenerator *generator = nullptr;
-                for (auto it : generators) {
-                    if (it->matchRequest(task.getRequest())) {
+                for (int i = 0; i < generatorsCnt; i++) {
+                    auto it = generators[i];
+                    if (it->matchRequest(task->getRequest())) {
                         generator = it;
                     }
                 }
@@ -24,9 +23,9 @@ namespace xc {
                 if (generator == nullptr) {
                     resp = new FileResponseData(conf::errorPage404);
                 } else {
-                    resp = generator->generateResponse(task.getRequest());
+                    resp = generator->generateResponse(task->getRequest());
                 }
-                task.processFinish(resp);
+                task->processFinish(resp);
             }
         }
 
