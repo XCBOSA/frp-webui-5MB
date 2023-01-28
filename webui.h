@@ -15,7 +15,7 @@
 using namespace std;
 
 #define assertx(expr, message) \
-    if (!(expr)) { std::cerr << message << std::endl; exit(-1); }
+    if (!(expr)) { std::cerr << (message) << std::endl; exit(-1); }
 
 namespace xc {
     constexpr int urlRequestBuffSize = 65536;

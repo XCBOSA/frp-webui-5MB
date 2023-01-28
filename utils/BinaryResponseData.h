@@ -13,7 +13,7 @@ namespace xc {
         class BinaryResponseData: public ResponseData {
         public:
             BinaryResponseData(int statusCode, uint8_t *body, int bodySize, string contentType);
-            BinaryResponseData(int statusCode, char *filePath, string contentType);
+            BinaryResponseData(int statusCode, string filePath, string contentType);
             void writeTo(::FILE *fp) const;
             void setHeader(string headerName, string value);
             bool isWriteFromFile() const;
@@ -22,7 +22,7 @@ namespace xc {
             int statusCode;
             map<string, string> headers;
             uint8_t *body;
-            char *filePath;
+            string filePath;
             int bodySize;
         };
 

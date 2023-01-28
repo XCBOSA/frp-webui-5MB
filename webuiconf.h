@@ -47,7 +47,7 @@ namespace xc::conf {
     });
 
     const auto errorPageTimeout = errorPage.applyReplacements(550, {
-            Replacement("errorMessage", "服务器任务处理已超时，可能服务器访问量过大，请稍后重试"),
-            Replacement("errorCode", "550")
+        Replacement("errorMessage", "服务器任务处理已超时，可能服务器访问量过大，请稍后重试"),
+        Replacement("errorCode", "550")
     });
 }

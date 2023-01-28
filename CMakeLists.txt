@@ -8,8 +8,9 @@ aux_source_directory(. DIR_SRCS)
 add_subdirectory(utils)
 add_subdirectory(httpserver)
 add_subdirectory(processor)
+add_subdirectory(controller)
 
 add_executable(FRPCWebUI ${DIR_SRCS})
 
 find_package(Threads)
-target_link_libraries(FRPCWebUI HttpServerUtils HttpServer ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(FRPCWebUI HttpServerUtils HttpServer Processor Controller ${CMAKE_THREAD_LIBS_INIT})

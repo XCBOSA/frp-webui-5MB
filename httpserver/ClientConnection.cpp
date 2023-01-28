@@ -103,14 +103,19 @@ namespace xc {
 
                 RequestData requestData(url, method, headers, body.str());
                 cout << "[HTTPServer] Received " << method << " Request URL = " << url << endl;
-                RequestProcessTask task(requestData);
-                processor::enqueueTask(&task);
+                if (url.find("..") != string::npos) {
+                    conf::errorPage400.writeTo(clWrite);
+                    cleanUpAndDestroy();
+                    return;
+                }
+                RequestProcessTask *task = new RequestProcessTask(requestData);
+                processor::enqueueTask(task);
                 ::time_t start, now;
                 ::time(&start);
                 while (true) {
                     usleep(1000 * 10);
-                    if (task.isFinish()) {
-                        ResponseData *taskResponse = task.getResponse();
+                    if (task->isFinish()) {
+                        ResponseData *taskResponse = task->getResponse();
                         taskResponse->writeTo(clWrite);
                         delete taskResponse;
                         break;
@@ -119,7 +124,8 @@ namespace xc {
                     if (::difftime(now, start) > conf::taskProcessTimeoutSeconds) {
                         cout << "[HTTPServer-Warn] Task failed because time out" << endl;
                         conf::errorPageTimeout.writeTo(clWrite);
-                        processor::deleteTask(&task);
+                        processor::deleteTask(task);
+                        task->setHttpDiscarded(true);
                         break;
                     }
                 }

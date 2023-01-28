@@ -6,3 +6,5 @@
 
 #include "RequestProcessorManager.h"
 #include "RequestProcessTask.h"
+#include "ContentGenerator.h"
+#include "RequestProcessWorker.h"

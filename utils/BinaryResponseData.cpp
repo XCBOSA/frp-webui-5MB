@@ -17,7 +17,7 @@ namespace xc {
             this->filePath = nullptr;
         }
 
-        BinaryResponseData::BinaryResponseData(int statusCode, char *filePath, string contentType): headers() {
+        BinaryResponseData::BinaryResponseData(int statusCode, string filePath, string contentType): headers() {
             this->statusCode = statusCode;
             this->body = nullptr;
             this->bodySize = 0;
@@ -68,7 +68,7 @@ namespace xc {
         }
 
         bool BinaryResponseData::isWriteFromFile() const {
-            return this->filePath != nullptr;
+            return !this->isWriteFromMemory();
         }
 
         bool BinaryResponseData::isWriteFromMemory() const {
