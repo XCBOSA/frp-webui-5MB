@@ -5,6 +5,7 @@
 #pragma once
 
 #include "utils-private.h"
+#include "ResponseData.h"
 
 namespace xc {
     namespace utils {

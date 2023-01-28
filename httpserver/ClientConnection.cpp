@@ -3,8 +3,10 @@
 //
 
 #include "ClientConnection.h"
+#include "../processor/processor.h"
 
 using namespace std;
+using namespace xc::processor;
 
 namespace xc {
     namespace httpserver {
@@ -101,6 +103,28 @@ namespace xc {
 
                 RequestData requestData(url, method, headers, body.str());
                 cout << "[HTTPServer] Received " << method << " Request URL = " << url << endl;
+                RequestProcessTask task(requestData);
+                processor::enqueueTask(&task);
+                ::time_t start, now;
+                ::time(&start);
+                while (true) {
+                    usleep(1000 * 10);
+                    if (task.isFinish()) {
+                        ResponseData *taskResponse = task.getResponse();
+                        taskResponse->writeTo(clWrite);
+                        delete taskResponse;
+                        break;
+                    }
+                    ::time(&now);
+                    if (::difftime(now, start) > conf::taskProcessTimeoutSeconds) {
+                        cout << "[HTTPServer-Warn] Task failed because time out" << endl;
+                        conf::errorPageTimeout.writeTo(clWrite);
+                        processor::deleteTask(&task);
+                        break;
+                    }
+                }
+                cleanUpAndDestroy();
+                return;
             } else {
                 conf::errorPage.applyReplacements(400, {
                     Replacement("errorCode", "400"),
@@ -109,10 +133,6 @@ namespace xc {
                 cleanUpAndDestroy();
                 return;
             }
-
-            TextResponseData(200, string(requestBuff)).writeTo(clWrite);
-            cleanUpAndDestroy();
-            return;
         }
 
         void ClientConnection::cleanUpAndDestroy() {

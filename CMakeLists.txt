@@ -7,6 +7,7 @@ aux_source_directory(. DIR_SRCS)
 
 add_subdirectory(utils)
 add_subdirectory(httpserver)
+add_subdirectory(processor)
 
 add_executable(FRPCWebUI ${DIR_SRCS})
 
