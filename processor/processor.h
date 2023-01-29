@@ -10,4 +10,7 @@
 #include "RequestProcessWorker.h"
 #include "templates/TemplateResponseData.h"
 #include "templates/ViewTemplatePrototypes.h"
+
+#include "templates/htmltags-for-editor-only.h"
+
 #include "../thirdparty/configor/json.hpp"
