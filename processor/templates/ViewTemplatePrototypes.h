@@ -36,6 +36,12 @@ namespace xc {
                 ViewTemplatePrototype& spellcheck(bool value);
                 ViewTemplatePrototype& title(string value);
                 ViewTemplatePrototype& href(string value);
+                ViewTemplatePrototype& name(string value);
+                ViewTemplatePrototype& content(string value);
+                ViewTemplatePrototype& rel(string value);
+                ViewTemplatePrototype& type(string value);
+                ViewTemplatePrototype& src(string value);
+                ViewTemplatePrototype& charset(string value);
 
                 ViewTemplatePrototype& pointer(ViewTemplatePrototype **ptr);
             protected:

@@ -146,6 +146,13 @@ namespace xc {
             ViewTemplatePrototype& ViewTemplatePrototype::spellcheck(bool value) { return this->prop("spellcheck", value ? "true" : "false"); }
             ViewTemplatePrototype& ViewTemplatePrototype::title(string value) { return this->prop("title", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::href(string value) { return this->prop("href", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::name(string value) { return this->prop("name", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::content(string value) { return this->prop("content", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::rel(string value) { return this->prop("rel", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::type(string value) { return this->prop("type", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::src(string value) { return this->prop("src", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::charset(string value) { return this->prop("charset", value); }
+
 
             Foreach::Foreach(vector<JsonModel> model, function<ViewTemplatePrototype(JsonModel)> generateBlock): ViewTemplatePrototype("") {
                 ViewCollection col;

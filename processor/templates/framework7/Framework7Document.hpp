@@ -13,13 +13,13 @@ namespace xc::processor::templates::framework7 {
         Framework7Document(): ViewTemplateComponent({ }) {
             html html({
                 head({
-                    meta().prop("charset", "utf-8"),
-                    meta().prop("name", "viewport").prop("content", "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover"),
-                    meta().prop("name", "apple-mobile-web-app-capable").prop("content", "yes"),
-                    meta().prop("name", "theme-color").prop("content", "#2196f3"),
+                    meta().charset("utf-8"),
+                    meta().name("viewport").content("width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover"),
+                    meta().name("apple-mobile-web-app-capable").content("yes"),
+                    meta().name("theme-color").content("#2196f3"),
                     templates::title("My App"),
-                    link().prop("rel", "stylesheet").href("framework7/framework7-bundle.min.css"),
-                    link().prop("rel", "stylesheet").href("index.css")
+                    link().rel("stylesheet").href("framework7/framework7-bundle.min.css"),
+                    link().rel("stylesheet").href("index.css")
                 }),
                 body({
                     div({
@@ -44,8 +44,8 @@ namespace xc::processor::templates::framework7 {
                         }).prop("data-name", "home").classAdd("page")
                     }).classAdd("view view-main")
                 }).id("app"),
-                script().prop("type", "text/javascript").prop("src", "framework7/framework7-bundle.min.js"),
-                script().prop("type", "text/javascript").prop("src", "index.js"),
+                script().type("text/javascript").src("framework7/framework7-bundle.min.js"),
+                script().type("text/javascript").src("index.js"),
             });
             this->inner(html);
         }
