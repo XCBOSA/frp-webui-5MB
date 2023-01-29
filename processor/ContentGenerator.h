@@ -10,9 +10,10 @@
 #define __merge_body(a, b) a ## b
 #define __merge(a, b) __merge_body(a, b)
 #define __uniqueVarName(name) __merge(name, __LINE__)
+#define __string_fic(a) #a
+#define __string_fic_r(a) __string_fic(a)
 
-#define ContentGeneratorDefine(cond, eval) \
-const ContentGenerator __uniqueVarName(AutoContentGenerator)([] (auto request) { cond; }, [] (auto request) { eval; });
+#define ContentGeneratorDefine(cond, eval) const static ContentGenerator __uniqueVarName(AutoContentGenerator_Line_)(__string_fic_r(__uniqueVarName(AutoRegistered) __FILE_NAME__), [] (auto request) { cond; }, [] (auto request) { eval; });
 
 using namespace std;
 
@@ -28,10 +29,12 @@ namespace xc {
         /*请定义为static*/
         class ContentGenerator {
         public:
-            ContentGenerator(RequestCheckBlock checker, ContentGenerateBlock generator);
+            ContentGenerator(string name, RequestCheckBlock checker, ContentGenerateBlock generator);
             bool matchRequest(RequestData request);
             ResponseData *generateResponse(RequestData request);
+            string getName();
         private:
+            string name;
             RequestCheckBlock checker;
             ContentGenerateBlock generator;
         };

@@ -14,6 +14,7 @@ namespace xc {
             this->headers["Server"] = "XCHttpServer";
             this->headers["Transfer-Encoding"] = "chunked";
             this->headers["Content-Type"] = contentType;
+            this->headers["keepalive"] = "false";
             this->filePath = nullptr;
         }
 
@@ -24,6 +25,7 @@ namespace xc {
             this->headers["Server"] = "XCHttpServer";
             this->headers["Transfer-Encoding"] = "chunked";
             this->headers["Content-Type"] = contentType;
+            this->headers["keepalive"] = "false";
             this->filePath = filePath;
         }
 
@@ -32,7 +34,7 @@ namespace xc {
         }
 
         void BinaryResponseData::writeTo(::FILE *fp) const {
-            ::fprintf(fp, "HTTP/1.0 %d FRPCWebUI\r\n", this->statusCode);
+            ::fprintf(fp, "HTTP/1.1 %d FRPCWebUI\r\n", this->statusCode);
             for (auto item : this->headers) {
                 ::fprintf(fp, "%s: %s\r\n", item.first.c_str(), item.second.c_str());
             }
@@ -47,19 +49,25 @@ namespace xc {
                 ::uint8_t *endNextCursor = this->body + this->bodySize;
                 for (int i = 0; i < writeTimes; i++) {
                     long writeSize = min((long)mtu, endNextCursor - cursor);
-                    ::fwrite(cursor, writeSize, mtu, fp);
+                    ::fprintf(fp, "%x\r\n", writeSize);
+                    ::fwrite(cursor, 1, writeSize, fp);
+                    ::fprintf(fp, "\r\n");
                     cursor += writeSize;
                 }
+                ::fprintf(fp, "0\r\n\r\n");
             }
             if (this->isWriteFromFile()) {
                 string filePath = this->filePath;
                 ::FILE *inputFile = ::fopen(filePath.c_str(), "rb");
                 if (inputFile) {
                     ::uint8_t buff[mtu];
-                    long readPerPack = 0;
+                    long readPerPack;
                     while ((readPerPack = ::fread(buff, 1, mtu, inputFile)) > 0) {
+                        ::fprintf(fp, "%x\r\n", readPerPack);
                         ::fwrite(buff, 1, readPerPack, fp);
+                        ::fprintf(fp, "\r\n");
                     }
+                    ::fprintf(fp, "0\r\n\r\n");
                 } else {
                     cerr << "[FileIOError]: " << ::strerror(errno) << endl;
                 }

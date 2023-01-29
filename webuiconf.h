@@ -29,6 +29,11 @@ namespace xc::conf {
             { "default", "application/octet-stream" },
     };
 
+    const vector<string> defaultFiles = {
+            "index.html",
+            "index.htm"
+    };
+
     const IncompleteFileResponseData errorPage(FileResponseData(500, "html/error.html", "text/html"));
 
     const auto errorPage400 = errorPage.applyReplacements(400, {

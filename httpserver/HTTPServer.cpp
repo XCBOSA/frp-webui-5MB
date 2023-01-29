@@ -24,7 +24,9 @@ namespace xc {
             bzero(&(serverAddress.sin_zero), 8);
             if (::bind(this->serverSocketFd, (struct sockaddr *)&serverAddress, sizeof(struct sockaddr)) == -1) {
                 cerr << "Unable to bind port " << this->bindPort << endl;
-                assertx(0, "");
+                this->bindPort++;
+                this->serverLoop();
+                return;
             }
             if (listen(this->serverSocketFd, 5) == -1) {
                 cerr << "Unable to bind port " << this->bindPort << endl;

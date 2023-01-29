@@ -135,6 +135,7 @@ namespace xc {
                     if (task->isFinish()) {
                         ResponseData *taskResponse = task->getResponse();
                         taskResponse->writeTo(clWrite);
+//                        taskResponse->writeTo(stdout);
                         delete taskResponse;
                         break;
                     }

@@ -3,6 +3,7 @@
 //
 
 #include "TextResponseData.h"
+#include "../webuiconf.h"
 
 using namespace std;
 
@@ -14,6 +15,7 @@ namespace xc {
             this->headers["Server"] = "XCHttpServer";
             this->headers["Transfer-Encoding"] = "chunked";
             this->headers["Content-Type"] = "text/html";
+            this->headers["keepalive"] = "false";
         }
 
         TextResponseData::TextResponseData(int statusCode, string body, string contentType):
@@ -54,12 +56,29 @@ namespace xc {
         }
 
         void TextResponseData::writeTo(::FILE *fp) const {
-            ::fprintf(fp, "HTTP/1.0 %d FRPCWebUI\r\n", this->statusCode);
+            ::fprintf(fp, "HTTP/1.1 %d FRPCWebUI\r\n", this->statusCode);
             for (auto item : this->headers) {
                 ::fprintf(fp, "%s: %s\r\n", item.first.c_str(), item.second.c_str());
             }
             ::fputs("\r\n", fp);
-            ::fputs(this->body.c_str(), fp);
+
+            long mtu = conf::mtu;
+            const char *data = this->body.c_str();
+            const char *cursor = data;
+            long dataSize = ::strlen(data);
+            const char *endNextCursor = data + ::strlen(data);
+            int writeTimes = dataSize / mtu;
+            if (dataSize % mtu) {
+                writeTimes++;
+            }
+            for (int i = 0; i < writeTimes; i++) {
+                long writeSize = min((long)mtu, endNextCursor - cursor);
+                ::fprintf(fp, "%x\r\n", writeSize);
+                ::fwrite(cursor, 1, writeSize, fp);
+                ::fprintf(fp, "\r\n");
+                cursor += writeSize;
+            }
+            ::fprintf(fp, "0\r\n\r\n");
             ::fflush(fp);
         }
     } // xc
