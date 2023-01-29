@@ -4,6 +4,9 @@
 
 #include "../processor/processor.h"
 #include "../webuiconf.h"
+
+#include "../processor/templates/framework7/Framework7Document.hpp"
+
 #include <sys/stat.h>
 
 using namespace std;
@@ -77,26 +80,8 @@ namespace xc::controller {
                            })
 
     ResponseData *test1(RequestData request) {
-        vector<map<string, string>> model = {
-                {
-                        { "name", "user1" },
-                        { "pwd", "123456" }
-                },
-                {
-                        { "name", "user2" },
-                        { "pwd", "234567" }
-                }
-        };
         return new TemplateResponseData({
-            p("Hello world"),
-            Foreach(model, [](map<string, string> it) {
-                return p({
-                    "Hello ",
-                    b(it["name"]),
-                    ", You password is ",
-                    it["pwd"]
-                }).style("text-align", "center");
-            })
+            framework7::Framework7Document()
         });
     }
 

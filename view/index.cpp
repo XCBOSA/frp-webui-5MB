@@ -4,8 +4,6 @@
 
 namespace xc::view {
 
-    DefineView(index, {
-        LHead
-    })
+    
 
 }

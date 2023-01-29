@@ -26,27 +26,27 @@ namespace xc {
                 return strToFix;
             }
 
-            string generateInner(ViewTemplatePrototype inner) {
-                ostringstream oss;
-                inner.generateHTML(oss);
-                return oss.str();
-            }
+//            string generateInner(ViewTemplatePrototype inner) {
+//                ostringstream oss;
+//                inner.generateHTML(oss);
+//                return oss.str();
+//            }
+//
+//            string generateInner(vector<ViewTemplatePrototype> inners) {
+//                ostringstream oss;
+//                for (auto it : inners) {
+//                    it.generateHTML(oss);
+//                }
+//                return oss.str();
+//            }
 
-            string generateInner(vector<ViewTemplatePrototype> inners) {
-                ostringstream oss;
-                for (auto it : inners) {
-                    it.generateHTML(oss);
-                }
-                return oss.str();
-            }
+            ViewTemplatePrototype::ViewTemplatePrototype(string directHTML): directHTML(directHTML), useDirectHTML(true), keyName(), properties(), styles() { }
 
-            ViewTemplatePrototype::ViewTemplatePrototype(string directHTML): directHTML(directHTML), useDirectHTML(true), keyName(), innerHTML(), properties(), styles() { }
-
-            ViewTemplatePrototype::ViewTemplatePrototype(const char *directHTML): directHTML(directHTML), useDirectHTML(true), keyName(), innerHTML(), properties(), styles() { }
+            ViewTemplatePrototype::ViewTemplatePrototype(const char *directHTML): directHTML(directHTML), useDirectHTML(true), keyName(), properties(), styles() { }
 
             ViewTemplatePrototype::ViewTemplatePrototype(string keyName, string innerText): directHTML(), useDirectHTML(false), keyName(keyName), innerHTML(innerText), properties(), styles() { }
 
-            ViewTemplatePrototype::ViewTemplatePrototype(string keyName, vector<ViewTemplatePrototype> inners): directHTML(), useDirectHTML(false), keyName(keyName), innerHTML(generateInner(inners)), properties(), styles() { }
+            ViewTemplatePrototype::ViewTemplatePrototype(string keyName, vector<ViewTemplatePrototype> inners): directHTML(), useDirectHTML(false), keyName(keyName), innerViews(inners), properties(), styles() { }
 
             void ViewTemplatePrototype::generateHTML(ostream &writeTo) {
                 if (this->useDirectHTML) {
@@ -75,6 +75,9 @@ namespace xc {
                         writeTo << '>';
                     }
                     writeTo << this->innerHTML;
+                    for (auto it : this->innerViews) {
+                        it.generateHTML(writeTo);
+                    }
                     if (!this->keyName.empty()) {
                         writeTo << "</";
                         writeTo << this->keyName;
@@ -97,13 +100,22 @@ namespace xc {
 
             ViewTemplatePrototype& ViewTemplatePrototype::inner(vector<ViewTemplatePrototype> inner) {
                 this->makeSureNotUseDirectHTML();
-                this->innerHTML = generateInner(inner);
+                this->innerViews = inner;
+                this->innerHTML = "";
+                return *this;
+            }
+
+            ViewTemplatePrototype& ViewTemplatePrototype::inner(ViewTemplatePrototype inner) {
+                this->makeSureNotUseDirectHTML();
+                this->innerViews = { inner };
+                this->innerHTML = "";
                 return *this;
             }
 
             ViewTemplatePrototype& ViewTemplatePrototype::inner(string inner) {
                 this->makeSureNotUseDirectHTML();
                 this->innerHTML = inner;
+                this->innerViews.clear();
                 return *this;
             }
 
@@ -117,6 +129,7 @@ namespace xc {
 
             ViewTemplatePrototype& ViewTemplatePrototype::klass(string value) { return this->prop("class", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::classAdd(string klass) {
+                this->makeSureNotUseDirectHTML();
                 if (this->properties.find("class") == this->properties.end()) {
                     this->properties["class"] = klass;
                 } else {
@@ -132,44 +145,57 @@ namespace xc {
             ViewTemplatePrototype& ViewTemplatePrototype::lang(string value) { return this->prop("lang", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::spellcheck(bool value) { return this->prop("spellcheck", value ? "true" : "false"); }
             ViewTemplatePrototype& ViewTemplatePrototype::title(string value) { return this->prop("title", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::href(string value) { return this->prop("href", value); }
 
             Foreach::Foreach(vector<JsonModel> model, function<ViewTemplatePrototype(JsonModel)> generateBlock): ViewTemplatePrototype("") {
-                ostringstream oss;
+                ViewCollection col;
                 for (JsonModel t : model) {
-                    generateBlock(t).generateHTML(oss);
+                    col.push_back(generateBlock(t));
                 }
-                this->inner(oss.str());
+                this->inner(col);
             }
 
             Foreach::Foreach(vector<JsonModel> model, function<ViewCollection (JsonModel)> generateBlock): ViewTemplatePrototype("") {
-                ostringstream oss;
+                ViewCollection col;
                 for (JsonModel t : model) {
-                    oss << generateInner(generateBlock(t));
+                    for (auto it : generateBlock(t)) {
+                        col.push_back(it);
+                    }
                 }
-                this->inner(oss.str());
+                this->inner(col);
             }
 
             Foreach::Foreach(JsonArrayObject model, function<ViewTemplatePrototype(JsonModel)> generateBlock): ViewTemplatePrototype("") {
-                ostringstream oss;
+                ViewCollection col;
                 for (JsonModel t : model) {
-                    generateBlock(t).generateHTML(oss);
+                    col.push_back(generateBlock(t));
                 }
-                this->inner(oss.str());
+                this->inner(col);
             }
 
             Foreach::Foreach(JsonArrayObject model, function<ViewCollection (JsonModel)> generateBlock): ViewTemplatePrototype("") {
-                ostringstream oss;
+                ViewCollection col;
                 for (JsonModel t : model) {
-                    oss << generateInner(generateBlock(t));
+                    for (auto it : generateBlock(t)) {
+                        col.push_back(it);
+                    }
                 }
-                this->inner(oss.str());
+                this->inner(col);
             }
 
-#define __GenerateElemImpl(tagName, keyString)                                                            \
+            ViewTemplatePrototype& ViewTemplatePrototype::pointer(ViewTemplatePrototype **ptr) {
+                *ptr = this;
+                return *this;
+            }
+
+            ViewTemplateComponent::ViewTemplateComponent(vector<ViewTemplatePrototype> inners): ViewTemplatePrototype("", inners) { }
+
+#define __GenerateElemImpl(tagName, keyString)  \
+            tagName::tagName(): ViewTemplatePrototype(keyString, "") { }                                  \
             tagName::tagName(string text): ViewTemplatePrototype(keyString, text) { }                     \
             tagName::tagName(const char *text): ViewTemplatePrototype(keyString, string(text)) { }        \
             tagName::tagName(ViewCollection inner): ViewTemplatePrototype(keyString, inner) { }           \
-            tagName::tagName(ViewTemplatePrototype inner): ViewTemplatePrototype(keyString, generateInner(inner)) { }
+            tagName::tagName(ViewTemplatePrototype inner): ViewTemplatePrototype(keyString, { inner }) { }
 #define __GenerateElemImpl_KeySameAsTagName(tagName) __GenerateElemImpl(tagName, #tagName)
 
             __GenerateElemImpl_KeySameAsTagName(a)
@@ -281,7 +307,7 @@ namespace xc {
             __GenerateElemImpl_KeySameAsTagName(table)
             __GenerateElemImpl_KeySameAsTagName(tbody)
             __GenerateElemImpl_KeySameAsTagName(td)
-            __GenerateElemImpl(template_, "template_")
+            __GenerateElemImpl(template_, "template")
             __GenerateElemImpl_KeySameAsTagName(textarea)
             __GenerateElemImpl_KeySameAsTagName(tfoot)
             __GenerateElemImpl_KeySameAsTagName(th)

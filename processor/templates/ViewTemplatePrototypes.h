@@ -22,6 +22,7 @@ namespace xc {
                 ViewTemplatePrototype& prop(string key, string value);
                 ViewTemplatePrototype& style(string key, string value);
                 ViewTemplatePrototype& inner(vector<ViewTemplatePrototype> inner);
+                ViewTemplatePrototype& inner(ViewTemplatePrototype inner);
                 ViewTemplatePrototype& inner(string inner);
 
                 ViewTemplatePrototype& klass(string value);
@@ -34,10 +35,13 @@ namespace xc {
                 ViewTemplatePrototype& lang(string value);
                 ViewTemplatePrototype& spellcheck(bool value);
                 ViewTemplatePrototype& title(string value);
+                ViewTemplatePrototype& href(string value);
+
+                ViewTemplatePrototype& pointer(ViewTemplatePrototype **ptr);
             protected:
-                string innerHTML;
-            private:
                 string directHTML;
+                string innerHTML;
+                vector<ViewTemplatePrototype> innerViews;
                 bool useDirectHTML;
                 string keyName;
                 map<string, string> properties;
@@ -60,9 +64,15 @@ namespace xc {
                 Foreach(JsonArrayObject arrayModel, function<ViewCollection (JsonModel)> generateBlock);
             };
 
+            class ViewTemplateComponent: public ViewTemplatePrototype {
+            public:
+                ViewTemplateComponent(vector<ViewTemplatePrototype> inners);
+            };
+
 #define __GenerateElemDefs(tagName)                       \
             class tagName: public ViewTemplatePrototype { \
             public:                                       \
+                tagName();                                \
                 tagName(string text);                     \
                 tagName(const char *text);                \
                 tagName(ViewCollection inner);            \
