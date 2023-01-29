@@ -8,3 +8,6 @@
 #include "RequestProcessTask.h"
 #include "ContentGenerator.h"
 #include "RequestProcessWorker.h"
+#include "templates/TemplateResponseData.h"
+#include "templates/ViewTemplatePrototypes.h"
+#include "../thirdparty/configor/json.hpp"

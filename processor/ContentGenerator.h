@@ -13,7 +13,8 @@
 #define __string_fic(a) #a
 #define __string_fic_r(a) __string_fic(a)
 
-#define ContentGeneratorDefine(cond, eval) const static ContentGenerator __uniqueVarName(AutoContentGenerator_Line_)(__string_fic_r(__uniqueVarName(AutoRegistered) __FILE_NAME__), [] (auto request) { cond; }, [] (auto request) { eval; });
+#define ContentGeneratorDefine(cond, eval) const static ContentGenerator __uniqueVarName(AutoContentGenerator_Line_)(__string_fic_r(__uniqueVarName(AutoRegistered_Line_) __FILE_NAME__), ([] (auto request) { cond; }), ([] (auto request) { eval; }));
+#define ContentGeneratorDefineS(cond, eval) ContentGeneratorDefine(return cond, return eval)
 
 using namespace std;
 

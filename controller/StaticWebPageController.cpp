@@ -8,6 +8,9 @@
 
 using namespace std;
 using namespace xc::processor;
+using namespace xc::processor::templates;
+
+using namespace configor;
 
 namespace xc::controller {
 
@@ -73,13 +76,35 @@ namespace xc::controller {
                                return (ResponseData *) new FileResponseData(conf::errorPage404);
                            })
 
-    ContentGeneratorDefine(return request.getURL() == "/test1", {
-        return new TextResponseData(200, "test1 controller response");
-    })
+    ResponseData *test1(RequestData request) {
+        vector<map<string, string>> model = {
+                {
+                        { "name", "user1" },
+                        { "pwd", "123456" }
+                },
+                {
+                        { "name", "user2" },
+                        { "pwd", "234567" }
+                }
+        };
+        return new TemplateResponseData({
+            p("Hello world"),
+            Foreach(model, [](map<string, string> it) {
+                return p({
+                    "Hello ",
+                    b(it["name"]),
+                    ", You password is ",
+                    it["pwd"]
+                });
+            })
+        });
+    }
 
-    ContentGeneratorDefine(return request.getURL() == "/test2", {
-        return new TextResponseData(200, "test2 controller response");
-    })
+    ContentGeneratorDefineS(request.getURL() == "/test1",
+                            test1(request))
+
+    ContentGeneratorDefineS(request.getURL() == "/test2",
+                            new TextResponseData(200, "test2 controller response"))
 
 }
 
