@@ -23,6 +23,17 @@ namespace xc {
                 ViewTemplatePrototype& style(string key, string value);
                 ViewTemplatePrototype& inner(vector<ViewTemplatePrototype> inner);
                 ViewTemplatePrototype& inner(string inner);
+
+                ViewTemplatePrototype& klass(string value);
+                ViewTemplatePrototype& classAdd(string klass);
+                ViewTemplatePrototype& contenteditable(bool value);
+                ViewTemplatePrototype& dir(string value);
+                ViewTemplatePrototype& draggable(bool value);
+                ViewTemplatePrototype& hidden(bool value);
+                ViewTemplatePrototype& id(string value);
+                ViewTemplatePrototype& lang(string value);
+                ViewTemplatePrototype& spellcheck(bool value);
+                ViewTemplatePrototype& title(string value);
             protected:
                 string innerHTML;
             private:

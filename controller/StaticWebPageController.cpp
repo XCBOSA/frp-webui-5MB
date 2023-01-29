@@ -95,7 +95,7 @@ namespace xc::controller {
                     b(it["name"]),
                     ", You password is ",
                     it["pwd"]
-                });
+                }).style("text-align", "center");
             })
         });
     }

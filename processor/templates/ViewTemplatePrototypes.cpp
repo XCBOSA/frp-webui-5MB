@@ -115,6 +115,24 @@ namespace xc {
                 }
             }
 
+            ViewTemplatePrototype& ViewTemplatePrototype::klass(string value) { return this->prop("class", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::classAdd(string klass) {
+                if (this->properties.find("class") == this->properties.end()) {
+                    this->properties["class"] = klass;
+                } else {
+                    this->properties["class"] += klass + " ";
+                }
+                return *this;
+            }
+            ViewTemplatePrototype& ViewTemplatePrototype::contenteditable(bool value) { return this->prop("contenteditable", value ? "true" : "false"); }
+            ViewTemplatePrototype& ViewTemplatePrototype::dir(string value) { return this->prop("dir", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::draggable(bool value) { return this->prop("draggable", value ? "true" : "false"); }
+            ViewTemplatePrototype& ViewTemplatePrototype::hidden(bool value) { return this->prop("hidden", value ? "true" : "false"); }
+            ViewTemplatePrototype& ViewTemplatePrototype::id(string value) { return this->prop("id", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::lang(string value) { return this->prop("lang", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::spellcheck(bool value) { return this->prop("spellcheck", value ? "true" : "false"); }
+            ViewTemplatePrototype& ViewTemplatePrototype::title(string value) { return this->prop("title", value); }
+
             Foreach::Foreach(vector<JsonModel> model, function<ViewTemplatePrototype(JsonModel)> generateBlock): ViewTemplatePrototype("") {
                 ostringstream oss;
                 for (JsonModel t : model) {
