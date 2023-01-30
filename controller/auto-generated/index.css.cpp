@@ -21,6 +21,6 @@ namespace xc::controller {
         , mimeTypeOfFile(ControllerPath));
     }
 
-    ContentGeneratorDefineS(request.getURL() == ControllerPath, controllerResponse(request))
+    ContentGeneratorDefineS(request.getURLPath() == ControllerPath, controllerResponse(request))
 
 }

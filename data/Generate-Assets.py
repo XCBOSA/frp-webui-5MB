@@ -47,7 +47,7 @@ if __name__ == "__main__":
             w.write(fileText + "\n")
             w.write("        , mimeTypeOfFile(ControllerPath));\n")
             w.write("    }\n\n")
-            w.write("    ContentGeneratorDefineS(request.getURL() == ControllerPath, controllerResponse(request))\n")
+            w.write("    ContentGeneratorDefineS(request.getURLPath() == ControllerPath, controllerResponse(request))\n")
             w.write("\n")
             w.write("}\n")
 

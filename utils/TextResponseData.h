@@ -26,9 +26,11 @@ namespace xc {
             string getBody();
             void writeTo(::FILE *fp) const;
             void writeResponseBodyTo(ostream &fp) const;
+            void addCookie(string key, string value);
         private:
             int statusCode;
             map<string, string> headers;
+            map<string, string> cookies;
             string body;
         };
 

@@ -34,12 +34,26 @@ namespace xc::controller {
             string("            path: \'/about/\',\n") + 
             string("            url: \'about.html\',\n") + 
             string("        },\n") + 
-            string("    ],\n") + 
-            string("    // ... other parameters\n") + 
-            string("});\n")
+            string("    ]\n") + 
+            string("});\n") + 
+            string("\n") + 
+            string("function doLogin(salt) {\n") + 
+            string("    let data = app.form.convertToData(\"#loginForm\")\n") + 
+            string("    if (data.username.length == 0) {\n") + 
+            string("        app.dialog.alert(\"请输入用户名\")\n") + 
+            string("        return\n") + 
+            string("    }\n") + 
+            string("    if (data.password.length == 0) {\n") + 
+            string("        app.dialog.alert(\"请输入密码\")\n") + 
+            string("        return\n") + 
+            string("    }\n") + 
+            string("    data.password = sha256_digest(data.password + salt)\n") + 
+            string("    window.location = \"/login?v=\" + JSON.stringify(data)\n") + 
+            string("    return\n") + 
+            string("}\n")
         , mimeTypeOfFile(ControllerPath));
     }
 
-    ContentGeneratorDefineS(request.getURL() == ControllerPath, controllerResponse(request))
+    ContentGeneratorDefineS(request.getURLPath() == ControllerPath, controllerResponse(request))
 
 }

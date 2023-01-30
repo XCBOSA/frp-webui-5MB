@@ -14,6 +14,7 @@ namespace xc {
             class TemplateResponseData: public TextResponseData {
             public:
                 TemplateResponseData(vector<ViewTemplatePrototype> prototypes);
+                TemplateResponseData(int statusCode, vector<ViewTemplatePrototype> prototypes);
                 void generateBody(const vector<ViewTemplatePrototype> &prototypes);
             };
 

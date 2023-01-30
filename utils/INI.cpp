@@ -46,15 +46,11 @@ namespace xc {
         INISection::INISection(string title, map<string, string> data): title(title), data(data) { }
 
         string INISection::get(string key) {
-            if (this->has(key)) {
-                return this->data[key];
-            } else {
-                return string();
-            }
+            return this->data[key];
         }
 
         bool INISection::has(string key) {
-            return this->data.count(key) != 0;
+            return this->data.count(key) == 1;
         }
 
         void INISection::set(string key, string value) {

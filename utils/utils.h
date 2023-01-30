@@ -10,6 +10,7 @@
 #include "FileResponseData.h"
 #include "BinaryResponseData.h"
 #include "INI.h"
+#include "RedirectResponse.h"
 
 using namespace std;
 

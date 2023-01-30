@@ -151,10 +151,9 @@ namespace xc {
                 cleanUpAndDestroy();
                 return;
             } else {
-                conf::errorPage.applyReplacements(400, {
-                    Replacement("errorCode", "400"),
-                    Replacement("errorMessage", "未知的协议 " + method)
-                }).writeTo(clWrite);
+                conf::ErrorView view(400, "");
+                view.setMessage("未知的协议 " + method);
+                TemplateResponseData({ view }).writeTo(clWrite);
                 cleanUpAndDestroy();
                 return;
             }

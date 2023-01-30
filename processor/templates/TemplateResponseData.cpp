@@ -12,6 +12,11 @@ namespace xc {
                 this->generateBody(prototypes);
             }
 
+            TemplateResponseData::TemplateResponseData(int statusCode, vector<ViewTemplatePrototype> prototypes): TextResponseData(200, "") {
+                this->setStatusCode(statusCode);
+                this->generateBody(prototypes);
+            }
+
             void TemplateResponseData::generateBody(const vector<ViewTemplatePrototype> &prototypes) {
                 ostringstream oss;
                 for (auto it : prototypes) {

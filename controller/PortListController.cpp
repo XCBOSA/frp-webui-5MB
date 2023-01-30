@@ -5,7 +5,6 @@
 #include "../processor/processor.h"
 #include "../webuiconf.h"
 #include "../processor/templates/framework7/Framework7Document.hpp"
-#include "../user.hpp"
 
 using namespace std;
 using namespace xc::processor;
@@ -15,16 +14,18 @@ using namespace configor;
 
 namespace xc::controller {
 
-    ResponseData *EntryController(RequestData request) {
+    ResponseData *PortListController(RequestData request) {
         return new TemplateResponseData({
-            If(user::isLogin(request.getCookie("Token")), {
-                ContentGeneratorReference("PortListController", request)
+            Framework7Document({
+                p("登陆成功")
             }, {
-                ContentGeneratorReference("LoginController", request)
+                a("2023 © Frp-WebUI by XCBOSA")
+                .classAdd("link")
+                .onclick("window.open('https://github.com/XCBOSA/frp-webui-500k.git')")
             })
         });
     }
 
-    ContentGeneratorDefineS(request.getURLPath() == "/", EntryController(request))
+    ContentGeneratorDefineWithNameS("PortListController", false, PortListController(request))
 
 }

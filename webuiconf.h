@@ -7,11 +7,13 @@
 #include <vector>
 #include <map>
 #include <sys/stat.h>
-#include "webui.h"
 #include "utils/utils.h"
+#include "processor/processor.h"
 
 using namespace std;
 using namespace xc::utils;
+using namespace xc::processor;
+using namespace xc::processor::templates;
 
 namespace xc::conf {
     const int clientSocketTimeoutSeconds = 3;
@@ -23,14 +25,22 @@ namespace xc::conf {
 
     const string userPasswordSalt("eDGJ&v,.W0U(66.lVQFsKfWb*bm*M+Lj");
     const string userJWTSecret("r)xB=P-6A4dpqXLk%03=f+*8TlXDM@%r");
-    const string userDataDir = "data/users";
+    const string userDataDir = "/etc/frpcwebui/users";
+    const int userTokenExpireSeconds = 60 * 60 * 24;
 
     inline string getUserDataDir() {
         struct stat buffer;
         if (stat(userDataDir.c_str(), &buffer) == 0) {
-            assertx(!S_ISREG(buffer.st_mode), "xc::conf::userDataDir must be configured to a folder, but a file located there.");
+            assert(!S_ISREG(buffer.st_mode));
+            return userDataDir;
         }
-        mkdir(userDataDir.c_str(), S_IRWXU);
+        mode_t old_mask = umask(0);
+        int n_ret = mkdir(userDataDir.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+        umask(old_mask);
+        if (n_ret != 0) {
+            ::perror("");
+            assert(n_ret == 0);
+        }
         return userDataDir;
     }
 
@@ -61,25 +71,43 @@ namespace xc::conf {
             "index.htm"
     };
 
-    const IncompleteFileResponseData errorPage(FileResponseData(500, "html/error.html", "text/html"));
+    class ErrorView: public View {
+    public:
+        ErrorView(int errorCode, string errorMessage): View("") {
+            ostringstream oss;
+            oss << "Error ";
+            oss << errorMessage;
+            oss << " ";
+            oss << errorCode;
+            html html({
+                head({
+                    meta().charset("UTF-8"),
+                    title(oss.str())
+                }),
+                body({
+                    p(oss.str())
+                    .style("text-align", "center")
+                    .pointer(&this->messageView),
+                    p("FRPC-WebUI / XCHttpServer 1.0")
+                    .style("text-align", "center")
+                })
+            });
+            this->inner(html);
+        }
 
-    const auto errorPage400 = errorPage.applyReplacements(400, {
-        Replacement("errorMessage", "请求格式错误，无法解析请求"),
-        Replacement("errorCode", "400")
-    });
+        void setMessage(string text) {
+            this->messageView->inner(text);
+        }
+    private:
+        View *messageView;
+    };
 
-    const auto errorPage404 = errorPage.applyReplacements(404, {
-        Replacement("errorMessage", "不存在指定的资源"),
-        Replacement("errorCode", "404")
-    });
+    const TemplateResponseData errorPage400(400, { ErrorView(400, "请求格式错误，无法解析请求") });
 
-    const auto errorPage500 = errorPage.applyReplacements(500, {
-        Replacement("errorMessage", "服务器内部错误，可能是服务器访问量过大，请稍后重试"),
-        Replacement("errorCode", "500")
-    });
+    const TemplateResponseData errorPage404(400, { ErrorView(404, "不存在指定的资源") });
 
-    const auto errorPageTimeout = errorPage.applyReplacements(550, {
-        Replacement("errorMessage", "服务器任务处理已超时，可能服务器访问量过大，请稍后重试"),
-        Replacement("errorCode", "550")
-    });
+    const TemplateResponseData errorPage500(400, { ErrorView(500, "服务器内部错误，可能是服务器访问量过大，请稍后重试") });
+
+    const TemplateResponseData errorPageTimeout(550, { ErrorView(550, "服务器任务处理已超时，可能服务器访问量过大，请稍后重试") });
+
 }

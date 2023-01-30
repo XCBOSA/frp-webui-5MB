@@ -39,6 +39,7 @@ namespace xc::processor::templates::framework7 {
                 }).id("app"),
                 script().type("text/javascript").src("framework7/framework7-bundle.min.js"),
                 script().type("text/javascript").src("index.js"),
+                script().type("text/javascript").src("sha256.js"),
             });
             this->inner(html);
         }
@@ -74,18 +75,30 @@ namespace xc::processor::templates::framework7 {
         }) { }
     };
 
-    class BlockView: public div {
+    class FormInputButtonView: public input {
     public:
-        BlockView(ViewCollection content): div(content) {
-            this->classAdd("block block-strong row");
+        FormInputButtonView(string text): input() {
+            this->type("submit");
+            this->value(text);
+            this->classAdd("button button-fill");
         }
     };
 
-    class BlockColumnView: public div {
+    class BlockView: public div {
     public:
-        BlockColumnView(ViewCollection content): div(content) {
-            this->classAdd("col");
+        BlockView(ViewCollection content): div(content) {
+            this->classAdd("block block-strong");
         }
+        BlockView& inset() { this->classAdd("inset"); return *this; }
+    };
+
+    class BlockTitleView: public div {
+    public:
+        BlockTitleView(string text): div(text) {
+            this->classAdd("block-title");
+        }
+        BlockTitleView& large() { this->classAdd("block-title-large"); return *this; }
+        BlockTitleView& medium() { this->classAdd("block-title-medium"); return *this; }
     };
 
     const string ClassButtonViewTypeFill("button-fill");
@@ -124,6 +137,9 @@ namespace xc::processor::templates::framework7 {
             this->style("height", oss.str());
         }
     };
+
+    typedef p Label;
+    typedef a Link;
 
 
 

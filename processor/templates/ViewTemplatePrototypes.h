@@ -45,6 +45,10 @@ namespace xc {
                 ViewTemplatePrototype& type(string value);
                 ViewTemplatePrototype& src(string value);
                 ViewTemplatePrototype& charset(string value);
+                ViewTemplatePrototype& action(string value);
+                ViewTemplatePrototype& method(string value);
+                ViewTemplatePrototype& value(string value);
+                ViewTemplatePrototype& onsubmit(string value);
 
                 ViewTemplatePrototype& pointer(ViewTemplatePrototype **ptr);
             protected:

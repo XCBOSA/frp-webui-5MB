@@ -20,13 +20,12 @@ namespace xc::controller {
     ContentGeneratorDefine({
         if (!conf::enableStaticAssetsController) { return false; }
         if (request.getMethod() != "GET") { return false; }
-        if (request.getURL().length() == 0) { return false; }
         struct stat buffer;
         string filePath = "html";
-        if (request.getURL()[0] == '/') {
-            filePath += request.getURL();
+        if (request.getURLPath()[0] == '/') {
+            filePath += request.getURLPath();
         } else {
-            filePath += "/" + request.getURL();
+            filePath += "/" + request.getURLPath();
         }
         if (stat(filePath.c_str(), &buffer) == 0) {
             if (S_ISREG(buffer.st_mode)) {
@@ -49,10 +48,10 @@ namespace xc::controller {
         }, {
         struct stat buffer;
         string filePath = "html";
-        if (request.getURL()[0] == '/') {
-            filePath += request.getURL();
+        if (request.getURLPath()[0] == '/') {
+            filePath += request.getURLPath();
         } else {
-            filePath += "/" + request.getURL();
+            filePath += "/" + request.getURLPath();
         }
         if (stat(filePath.c_str(), &buffer) == 0) {
             if (S_ISREG(buffer.st_mode)) {
@@ -74,7 +73,7 @@ namespace xc::controller {
                 }
             }
         }
-        return (ResponseData *) new FileResponseData(conf::errorPage404);
+        return (ResponseData *) new TemplateResponseData(conf::errorPage404);
     })
 
 }

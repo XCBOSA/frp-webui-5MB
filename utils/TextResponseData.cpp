@@ -56,8 +56,19 @@ namespace xc {
         }
 
         void TextResponseData::writeTo(::FILE *fp) const {
-            ::fprintf(fp, "HTTP/1.1 %d FRPCWebUI\r\n", this->statusCode);
-            for (auto item : this->headers) {
+            ::fprintf(fp, "HTTP/1.1 %d XCHttpServer\r\n", this->statusCode);
+            map<string, string> headers(this->headers);
+            if (!this->cookies.empty()) {
+                ostringstream oss;
+                for (auto it : this->cookies) {
+                    oss << it.first;
+                    oss << "=";
+                    oss << it.second;
+                    oss << "; ";
+                }
+                headers["Set-Cookie"] = oss.str();
+            }
+            for (auto item : headers) {
                 ::fprintf(fp, "%s: %s\r\n", item.first.c_str(), item.second.c_str());
             }
             ::fputs("\r\n", fp);
@@ -84,6 +95,10 @@ namespace xc {
 
         void TextResponseData::writeResponseBodyTo(ostream &fp) const {
             fp << this->body;
+        }
+
+        void TextResponseData::addCookie(string key, string value) {
+            this->cookies[key] = value;
         }
     } // xc
 } // utils

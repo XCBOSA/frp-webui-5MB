@@ -63,14 +63,16 @@ namespace xc {
                             writeTo << "\" ";
                         }
 
-                        writeTo << "style=\"";
-                        for (auto it: this->styles) {
-                            writeTo << it.first;
-                            writeTo << ": ";
-                            writeTo << it.second;
-                            writeTo << "; ";
+                        if (!this->styles.empty()) {
+                            writeTo << "style=\"";
+                            for (auto it: this->styles) {
+                                writeTo << it.first;
+                                writeTo << ": ";
+                                writeTo << it.second;
+                                writeTo << "; ";
+                            }
+                            writeTo << '\"';
                         }
-                        writeTo << '\"';
 
                         writeTo << '>';
                     }
@@ -155,6 +157,10 @@ namespace xc {
             ViewTemplatePrototype& ViewTemplatePrototype::type(string value) { return this->prop("type", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::src(string value) { return this->prop("src", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::charset(string value) { return this->prop("charset", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::action(string value) { return this->prop("action", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::method(string value) { return this->prop("method", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::value(string value) { return this->prop("value", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::onsubmit(string value) { return this->prop("onsubmit", value); }
 
             View ContentGeneratorReference(string name, RequestData request) {
                 const ContentGenerator *generator = processor::findContentGenerator(name);

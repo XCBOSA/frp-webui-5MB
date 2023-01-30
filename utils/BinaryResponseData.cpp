@@ -34,7 +34,7 @@ namespace xc {
         }
 
         void BinaryResponseData::writeTo(::FILE *fp) const {
-            ::fprintf(fp, "HTTP/1.1 %d FRPCWebUI\r\n", this->statusCode);
+            ::fprintf(fp, "HTTP/1.1 %d XCHttpServer\r\n", this->statusCode);
             for (auto item : this->headers) {
                 ::fprintf(fp, "%s: %s\r\n", item.first.c_str(), item.second.c_str());
             }

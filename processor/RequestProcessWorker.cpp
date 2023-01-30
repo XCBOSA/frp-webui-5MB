@@ -21,7 +21,7 @@ namespace xc {
                 }
                 ResponseData *resp = nullptr;
                 if (generator == nullptr) {
-                    resp = new FileResponseData(conf::errorPage404);
+                    resp = new TemplateResponseData(conf::errorPage404);
                 } else {
                     resp = generator->generateResponse(task->getRequest());
                 }
