@@ -19,6 +19,9 @@ namespace xc::controller {
     ResponseData *LoginController(RequestData request) {
         return new TemplateResponseData({
             Framework7Document({
+                If(request.getCookie("Token") == "loginFailed", {
+                    script("window.onload = function() { app.dialog.alert('登陆失败，请检查用户名或密码') }")
+                }),
                 BlockTitleView("需要登陆"),
                 FormView({
                     FormInputView("username", "用户名", "text", "输入您的用户名").id("username"),
@@ -27,7 +30,7 @@ namespace xc::controller {
                         BlockView({
                             ButtonView("登陆").onclick("doLogin('" + conf::userPasswordSalt + "')"),
                             VerticalSpacer(10),
-                            Label("如果您需要注册，请联系管理员")
+                            Label("如果您需要注册，请联系管理员，管理员请参考GitHub中的Readme来创建账号。")
                         })
                     })
                 }).action("/").method("get").id("loginForm"),
@@ -47,18 +50,19 @@ namespace xc::controller {
         string username = model["username"];
         string password = model["password"];
         string token = user::tryLogin(username, password);
-//        TemplateResponseData *resp = new TemplateResponseData({
-//            If(token.empty(), {
-//                ContentGeneratorReference("LoginController", request)
-//            }, {
-//                ContentGeneratorReference("PortListController", request)
-//            })
-//        });
         auto resp = new RedirectResponse("/");
         resp->addCookie("Token", token);
         return resp;
     }
 
     ContentGeneratorDefineS(request.getURLPath() == "/login", ValidAuthController(request))
+
+    ResponseData *QuitLoginStateController(RequestData request) {
+        auto resp = new RedirectResponse("/");
+        resp->addCookie("Token", "");
+        return resp;
+    }
+
+    ContentGeneratorDefineS(request.getURLPath() == "/quitLogin", QuitLoginStateController(request))
 
 }

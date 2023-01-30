@@ -17,6 +17,8 @@ namespace xc::controller {
     ResponseData *PortListController(RequestData request) {
         return new TemplateResponseData({
             Framework7Document({
+                a("退出登陆").classAdd("link").onclick("window.location='/quitLogin'")
+            }, {
                 p("登陆成功")
             }, {
                 a("2023 © Frp-WebUI by XCBOSA")

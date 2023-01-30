@@ -10,7 +10,7 @@
 namespace xc::processor::templates::framework7 {
     class Framework7Document: public View {
     public:
-        Framework7Document(ViewCollection pageContent, ViewCollection tabBarContent): View({ }) {
+        Framework7Document(ViewCollection titleContent, ViewCollection pageContent, ViewCollection tabBarContent): View({ }) {
             html html({
                 head({
                     meta().charset("utf-8"),
@@ -27,7 +27,8 @@ namespace xc::processor::templates::framework7 {
                             div({
                                 div().classAdd("navbar-bg"),
                                 div({
-                                    div(conf::title).classAdd("title")
+                                    div(conf::title).classAdd("title"),
+                                    View("", titleContent)
                                 }).classAdd("navbar-inner")
                             }).classAdd("navbar"),
                             div({
@@ -43,6 +44,8 @@ namespace xc::processor::templates::framework7 {
             });
             this->inner(html);
         }
+
+        Framework7Document(ViewCollection pageContent, ViewCollection tabBarContent): Framework7Document({ }, pageContent, tabBarContent) { };
     };
 
     class FormView: public form {

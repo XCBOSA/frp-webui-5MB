@@ -16,13 +16,18 @@ using namespace configor;
 namespace xc::controller {
 
     ResponseData *EntryController(RequestData request) {
-        return new TemplateResponseData({
-            If(user::isLogin(request.getCookie("Token")), {
+        bool isUserLogin = user::isLogin(request.getCookie("Token"));
+        auto data = new TemplateResponseData({
+            If(isUserLogin, {
                 ContentGeneratorReference("PortListController", request)
             }, {
                 ContentGeneratorReference("LoginController", request)
             })
         });
+        if (!isUserLogin) {
+            data->addCookie("Token", "");
+        }
+        return data;
     }
 
     ContentGeneratorDefineS(request.getURLPath() == "/", EntryController(request))

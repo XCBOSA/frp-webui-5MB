@@ -26,7 +26,7 @@ namespace user {
         ::time(&t);
         oss << (t + conf::userTokenExpireSeconds);
         oss << "/";
-        oss << sha256(oss.str());
+        oss << sha256(oss.str() + conf::userJWTSecret);
         return oss.str();
     }
 
@@ -39,7 +39,7 @@ namespace user {
                 return generateToken(username);
             }
         }
-        return "";
+        return "loginFailed";
     }
 
     static vector<string> split(const string& str, const string& delim) {
@@ -92,7 +92,7 @@ namespace user {
         oss << "/";
         oss << time;
         oss << "/";
-        string rhash = sha256(oss.str());
+        string rhash = sha256(oss.str() + conf::userJWTSecret);
         if (hash != rhash) {
             return "";
         }
