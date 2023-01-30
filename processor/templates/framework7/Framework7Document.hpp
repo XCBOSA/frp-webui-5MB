@@ -40,7 +40,7 @@ namespace xc::processor::templates::framework7 {
                                 p("Page content goes here"),
                                 a("About app").href("/about/")
                             }).classAdd("page-content")
-
+                            
                         }).prop("data-name", "home").classAdd("page")
                     }).classAdd("view view-main")
                 }).id("app"),

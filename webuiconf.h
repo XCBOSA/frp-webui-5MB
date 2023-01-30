@@ -16,6 +16,8 @@ namespace xc::conf {
     const int taskProcessTimeoutSeconds = 1;
     const int mtu = 1536;
 
+    const bool enableStaticAssetsController = false;
+
     const map<string, string> fileExtensionToMimeTypes = {
             { ".html", "text/html" },
             { ".htm", "text/html" },

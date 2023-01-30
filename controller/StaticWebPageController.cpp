@@ -18,6 +18,7 @@ using namespace configor;
 namespace xc::controller {
 
     ContentGeneratorDefine({
+                               if (!conf::enableStaticAssetsController) { return false; }
                                if (request.getMethod() != "GET") { return false; }
                                if (request.getURL().length() == 0) { return false; }
                                struct stat buffer;
