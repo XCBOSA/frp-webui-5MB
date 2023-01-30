@@ -21,9 +21,7 @@ namespace xc::controller {
             }, {
                 p("登陆成功")
             }, {
-                a("2023 © Frp-WebUI by XCBOSA")
-                .classAdd("link")
-                .onclick("window.open('https://github.com/XCBOSA/frp-webui-500k.git')")
+                a("2023 © Frp-WebUI by XCBOSA").classAdd("link").onclick("window.open('https://github.com/XCBOSA/frp-webui-500k.git')")
             })
         });
     }

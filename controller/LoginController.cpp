@@ -30,7 +30,11 @@ namespace xc::controller {
                         BlockView({
                             ButtonView("登陆").onclick("doLogin('" + conf::userPasswordSalt + "')"),
                             VerticalSpacer(10),
-                            Label("如果您需要注册，请联系管理员，管理员请参考GitHub中的Readme来创建账号。")
+                            Label({
+                                "如果您需要注册，请联系管理员，管理员请参考",
+                                Link("GitHub中的Readme").classAdd("link").onclick("window.open('https://github.com/XCBOSA/frp-webui-500k.git')"),
+                                "来创建账号。"
+                            })
                         })
                     })
                 }).action("/").method("get").id("loginForm"),

@@ -1,5 +1,5 @@
 //
-// Created by xcbosa on 2023-01-30
+// Created by xcbosa on 2023-01-31
 //
 
 #include "../../processor/processor.h"
@@ -28,7 +28,8 @@ namespace xc::controller {
             string("    panel: {\n") + 
             string("        swipe: true,\n") + 
             string("    },\n") + 
-            string("    // Add default routes\n") + 
+            string("    // Add default routes,\n") + 
+            string("    autoDarkMode: true,\n") + 
             string("    routes: [\n") + 
             string("        {\n") + 
             string("            path: \'/about/\',\n") + 

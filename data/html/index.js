@@ -9,7 +9,8 @@ let app = new Framework7({
     panel: {
         swipe: true,
     },
-    // Add default routes
+    // Add default routes,
+    autoDarkMode: true,
     routes: [
         {
             path: '/about/',
