@@ -42,7 +42,7 @@ namespace user {
         return "";
     }
 
-    inline vector<string> split(const string& str, const string& delim) __attribute__((weak)) {
+    static vector<string> split(const string& str, const string& delim) {
         vector<string> res;
         if ("" == str) return res;
         char * strs = new char[str.length() + 1];
@@ -58,7 +58,7 @@ namespace user {
         return res;
     }
 
-    inline std::string& trim(std::string &s) __attribute__((weak)) {
+    static std::string& trim(std::string &s) {
         if (s.empty()) { return s; }
         s.erase(0,s.find_first_not_of(" "));
         s.erase(s.find_last_not_of(" ") + 1);

@@ -8,7 +8,7 @@
 namespace xc {
     namespace utils {
 
-        vector<string> split(const string& str, const string& delim) {
+        static vector<string> split(const string& str, const string& delim) {
             vector<string> res;
             if ("" == str) return res;
             char * strs = new char[str.length() + 1];
@@ -24,7 +24,7 @@ namespace xc {
             return res;
         }
 
-        string& replace_all(string& src, const string& old_value, const string& new_value) {
+        static string& replace_all(string& src, const string& old_value, const string& new_value) {
             for (string::size_type pos(0); pos != string::npos; pos += new_value.length()) {
                 if ((pos = src.find(old_value, pos)) != string::npos) {
                     src.replace(pos, old_value.length(), new_value);
@@ -34,7 +34,7 @@ namespace xc {
             return src;
         }
 
-        std::string& trim(std::string &s) {
+        static std::string& trim(std::string &s) {
             if (s.empty()) { return s; }
             s.erase(0,s.find_first_not_of(" "));
             s.erase(s.find_last_not_of(" ") + 1);

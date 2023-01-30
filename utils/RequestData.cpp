@@ -131,7 +131,7 @@ namespace xc {
             if (cookies.empty()) { return ""; }
             vector<string> cookieList = split(cookies, ";");
             for (string cookie : cookieList) {
-                auto items = split(cookies, "=");
+                auto items = split(cookie, "=");
                 if (items.size() == 2) {
                     string name = items[0];
                     string value = items[1];

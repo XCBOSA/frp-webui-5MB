@@ -39,7 +39,7 @@ namespace xc::controller {
         });
     }
 
-    ContentGeneratorDefineWithNameS("LoginController", request.getURLPath() == "/", LoginController(request))
+    ContentGeneratorDefineWithNameS("LoginController", false, LoginController(request))
 
     ResponseData *ValidAuthController(RequestData request) {
         string arg = request.getURLArgument("v");
