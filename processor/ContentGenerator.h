@@ -13,7 +13,9 @@
 #define __string_fic(a) #a
 #define __string_fic_r(a) __string_fic(a)
 
-#define ContentGeneratorDefine(cond, eval) const static ContentGenerator __uniqueVarName(AutoContentGenerator_Line_)(__string_fic_r(__uniqueVarName(AutoRegistered_Line_) __FILE_NAME__), ([] (auto request) { cond; }), ([] (auto request) { eval; }));
+#define ContentGeneratorDefineWithName(name, cond, eval) const static ContentGenerator __uniqueVarName(AutoContentGenerator_Line_)(name, ([] (auto request) { cond; }), ([] (auto request) { eval; }));
+#define ContentGeneratorDefineWithNameS(name, cond, eval) ContentGeneratorDefineWithName(name, return cond, return eval)
+#define ContentGeneratorDefine(cond, eval) ContentGeneratorDefineWithName(__string_fic_r(__uniqueVarName(AutoRegistered_Line_) __FILE_NAME__), cond, eval)
 #define ContentGeneratorDefineS(cond, eval) ContentGeneratorDefine(return cond, return eval)
 
 using namespace std;
@@ -31,14 +33,16 @@ namespace xc {
         class ContentGenerator {
         public:
             ContentGenerator(string name, RequestCheckBlock checker, ContentGenerateBlock generator);
-            bool matchRequest(RequestData request);
-            ResponseData *generateResponse(RequestData request);
-            string getName();
+            bool matchRequest(RequestData request) const;
+            ResponseData *generateResponse(RequestData request) const;
+            string getName() const;
         private:
             string name;
             RequestCheckBlock checker;
             ContentGenerateBlock generator;
         };
+
+        const ContentGenerator *findContentGenerator(string name);
 
     }
 }

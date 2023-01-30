@@ -12,6 +12,7 @@ namespace xc {
         class ResponseData {
         public:
             virtual void writeTo(::FILE *fp) const = 0;
+            virtual void writeResponseBodyTo(ostream &fp) const = 0;
         };
 
     } // xc

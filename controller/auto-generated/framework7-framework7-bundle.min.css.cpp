@@ -2,9 +2,9 @@
 // Created by xcbosa on 2023-01-30
 //
 
-#include "../processor/processor.h"
-#include "../utils/utils.h"
-#include "../webuiconf.h"
+#include "../../processor/processor.h"
+#include "../../utils/utils.h"
+#include "../../webuiconf.h"
 
 using namespace std;
 using namespace xc::processor;

@@ -25,6 +25,7 @@ namespace xc {
             void setBody(string body);
             string getBody();
             void writeTo(::FILE *fp) const;
+            void writeResponseBodyTo(ostream &fp) const;
         private:
             int statusCode;
             map<string, string> headers;

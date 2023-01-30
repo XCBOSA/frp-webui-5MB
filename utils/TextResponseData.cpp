@@ -81,5 +81,9 @@ namespace xc {
             ::fprintf(fp, "0\r\n\r\n");
             ::fflush(fp);
         }
+
+        void TextResponseData::writeResponseBodyTo(ostream &fp) const {
+            fp << this->body;
+        }
     } // xc
 } // utils

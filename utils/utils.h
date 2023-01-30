@@ -9,10 +9,12 @@
 #include "TextResponseData.h"
 #include "FileResponseData.h"
 #include "BinaryResponseData.h"
+#include "INI.h"
 
 using namespace std;
 
 namespace xc::utils {
     string contentsOfTextFile(string filePath);
+    void saveTextFile(string filePath, string content);
     string mimeTypeOfFile(string filePath);
 }

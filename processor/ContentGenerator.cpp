@@ -23,16 +23,25 @@ namespace xc {
             cout << "[ContentGenerator] Registered " << name << endl;
         }
 
-        bool ContentGenerator::matchRequest(RequestData request) {
+        bool ContentGenerator::matchRequest(RequestData request) const {
             return this->checker(request);
         }
 
-        ResponseData *ContentGenerator::generateResponse(RequestData request) {
+        ResponseData *ContentGenerator::generateResponse(RequestData request) const {
             return this->generator(request);
         }
 
-        string ContentGenerator::getName() {
+        string ContentGenerator::getName() const {
             return this->name;
+        }
+
+        const ContentGenerator *findContentGenerator(string name) {
+            for (int i = 0; i < generatorsCnt; i++) {
+                if (generators[i]->getName() == name) {
+                    return generators[i];
+                }
+            }
+            return nullptr;
         }
     }
 }

@@ -7,6 +7,8 @@ import sys
 import datetime
 
 if __name__ == "__main__":
+    if not os.path.exists("../controller/auto-generated"):
+        os.mkdir("../controller/auto-generated")
     if len(sys.argv) != 2:
         print("usage: Generate-Assets <AssetFilePath>")
         exit(-1)
@@ -21,16 +23,16 @@ if __name__ == "__main__":
         fileText = " + \n".join(fileTexts)
         if len(fileTexts) == 0:
             fileText = "\"\""
-        writeToFilePath = "../controller/" + assetPath.replace("/", "-") + ".cpp"
+        writeToFilePath = "../controller/auto-generated/" + assetPath.replace("/", "-") + ".cpp"
         print("Writing to " + writeToFilePath)
         with open(writeToFilePath, "w+", encoding="utf-8") as w:
             w.write("//\n")
             w.write("// Created by xcbosa on " + str(datetime.date.today()) + "\n")
             w.write("//\n")
             w.write("\n")
-            w.write("#include \"../processor/processor.h\"\n")
-            w.write("#include \"../utils/utils.h\"\n")
-            w.write("#include \"../webuiconf.h\"\n")
+            w.write("#include \"../../processor/processor.h\"\n")
+            w.write("#include \"../../utils/utils.h\"\n")
+            w.write("#include \"../../webuiconf.h\"\n")
             w.write("\n")
             w.write("using namespace std;\n")
             w.write("using namespace xc::processor;\n")

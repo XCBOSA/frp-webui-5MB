@@ -3,6 +3,7 @@
 //
 
 #include "ViewTemplatePrototypes.h"
+#include "../ContentGenerator.h"
 
 namespace xc {
     namespace processor {
@@ -20,7 +21,6 @@ namespace xc {
 
             string fixStringFormat(string strToFix) {
                 replace_all(strToFix, "\"", "\\\"");
-                replace_all(strToFix, "\'", "\\\'");
                 replace_all(strToFix, "\r", "\\\r");
                 replace_all(strToFix, "\n", "\\\n");
                 return strToFix;
@@ -42,7 +42,7 @@ namespace xc {
 
             ViewTemplatePrototype::ViewTemplatePrototype(string directHTML): directHTML(directHTML), useDirectHTML(true), keyName(), properties(), styles() { }
 
-            ViewTemplatePrototype::ViewTemplatePrototype(const char *directHTML): directHTML(directHTML), useDirectHTML(true), keyName(), properties(), styles() { }
+            ViewTemplatePrototype::ViewTemplatePrototype(const char *directHTML): directHTML(directHTML == nullptr ? "" : directHTML), useDirectHTML(true), keyName(), properties(), styles() { }
 
             ViewTemplatePrototype::ViewTemplatePrototype(string keyName, string innerText): directHTML(), useDirectHTML(false), keyName(keyName), innerHTML(innerText), properties(), styles() { }
 
@@ -141,18 +141,49 @@ namespace xc {
             ViewTemplatePrototype& ViewTemplatePrototype::dir(string value) { return this->prop("dir", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::draggable(bool value) { return this->prop("draggable", value ? "true" : "false"); }
             ViewTemplatePrototype& ViewTemplatePrototype::hidden(bool value) { return this->prop("hidden", value ? "true" : "false"); }
+            ViewTemplatePrototype& ViewTemplatePrototype::disabled(bool value) { return this->prop("disabled", value ? "true" : "false"); }
             ViewTemplatePrototype& ViewTemplatePrototype::id(string value) { return this->prop("id", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::lang(string value) { return this->prop("lang", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::spellcheck(bool value) { return this->prop("spellcheck", value ? "true" : "false"); }
             ViewTemplatePrototype& ViewTemplatePrototype::title(string value) { return this->prop("title", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::href(string value) { return this->prop("href", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::onclick(string value) { return this->prop("onclick", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::name(string value) { return this->prop("name", value); }
+            ViewTemplatePrototype& ViewTemplatePrototype::placeholder(string value) { return this->prop("placeholder", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::content(string value) { return this->prop("content", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::rel(string value) { return this->prop("rel", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::type(string value) { return this->prop("type", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::src(string value) { return this->prop("src", value); }
             ViewTemplatePrototype& ViewTemplatePrototype::charset(string value) { return this->prop("charset", value); }
 
+            View ContentGeneratorReference(string name, RequestData request) {
+                const ContentGenerator *generator = processor::findContentGenerator(name);
+                if (generator == nullptr) {
+                    return View("");
+                }
+                ResponseData *resp = generator->generateResponse(request);
+                if (resp == nullptr) {
+                    return View("");
+                }
+                ostringstream oss;
+                resp->writeResponseBodyTo(oss);
+                delete resp;
+                return View(oss.str());
+            }
+
+            If::If(bool conditions, ViewCollection then): View("") {
+                if (conditions) {
+                    this->inner(then);
+                }
+            }
+
+            If::If(bool conditions, ViewCollection then, ViewCollection else_): View("") {
+                if (conditions) {
+                    this->inner(then);
+                } else {
+                    this->inner(else_);
+                }
+            }
 
             Foreach::Foreach(vector<JsonModel> model, function<ViewTemplatePrototype(JsonModel)> generateBlock): ViewTemplatePrototype("") {
                 ViewCollection col;

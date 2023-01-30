@@ -75,6 +75,30 @@ namespace xc {
             ::fflush(fp);
         }
 
+        void BinaryResponseData::writeResponseBodyTo(ostream &fp) const {
+            int mtu = conf::mtu;
+            if (this->isWriteFromMemory()) {
+                for (int i = 0; i < this->bodySize; i++) {
+                    fp.put(this->body[i]);
+                }
+            }
+            if (this->isWriteFromFile()) {
+                string filePath = this->filePath;
+                ::FILE *inputFile = ::fopen(filePath.c_str(), "rb");
+                if (inputFile) {
+                    ::uint8_t buff[mtu];
+                    long readPerPack;
+                    while ((readPerPack = ::fread(buff, 1, mtu, inputFile)) > 0) {
+                        for (int i = 0; i < readPerPack; i++) {
+                            fp.put(buff[i]);
+                        }
+                    }
+                } else {
+                    cerr << "[FileIOError]: " << ::strerror(errno) << endl;
+                }
+            }
+        }
+
         bool BinaryResponseData::isWriteFromFile() const {
             return !this->isWriteFromMemory();
         }

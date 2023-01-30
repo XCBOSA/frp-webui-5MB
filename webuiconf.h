@@ -6,6 +6,8 @@
 
 #include <vector>
 #include <map>
+#include <sys/stat.h>
+#include "webui.h"
 #include "utils/utils.h"
 
 using namespace std;
@@ -15,8 +17,22 @@ namespace xc::conf {
     const int clientSocketTimeoutSeconds = 3;
     const int taskProcessTimeoutSeconds = 1;
     const int mtu = 1536;
-
     const bool enableStaticAssetsController = false;
+
+    const string title("Frp-WebUI-XCBOSA");
+
+    const string userPasswordSalt("eDGJ&v,.W0U(66.lVQFsKfWb*bm*M+Lj");
+    const string userJWTSecret("r)xB=P-6A4dpqXLk%03=f+*8TlXDM@%r");
+    const string userDataDir = "data/users";
+
+    inline string getUserDataDir() {
+        struct stat buffer;
+        if (stat(userDataDir.c_str(), &buffer) == 0) {
+            assertx(!S_ISREG(buffer.st_mode), "xc::conf::userDataDir must be configured to a folder, but a file located there.");
+        }
+        mkdir(userDataDir.c_str(), S_IRWXU);
+        return userDataDir;
+    }
 
     const map<string, string> fileExtensionToMimeTypes = {
             { ".html", "text/html" },

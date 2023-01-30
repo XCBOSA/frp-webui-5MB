@@ -11,7 +11,7 @@ namespace xc::utils {
     string contentsOfTextFile(string filePath) {
         ifstream fin(filePath);
         if (fin.fail()) {
-            cerr << "[FileIOError]: " << ::strerror(errno) << endl;
+            cerr << "[FileIOError]: Read Error " << ::strerror(errno) << endl;
             return "404";
         }
         stringstream buffer;
@@ -19,6 +19,17 @@ namespace xc::utils {
         string str(buffer.str());
         fin.close();
         return str;
+    }
+
+    void saveTextFile(string filePath, string content) {
+        ofstream ofs(filePath);
+        if (ofs.fail()) {
+            cerr << "[FileIOError]: Write Error " << ::strerror(errno) << endl;
+            return;
+        }
+        ofs << content;
+        ofs.flush();
+        ofs.close();
     }
 
     string mimeTypeOfFile(string filePath) {

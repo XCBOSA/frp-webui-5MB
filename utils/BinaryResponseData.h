@@ -15,6 +15,7 @@ namespace xc {
             BinaryResponseData(int statusCode, uint8_t *body, int bodySize, string contentType);
             BinaryResponseData(int statusCode, string filePath, string contentType);
             void writeTo(::FILE *fp) const;
+            void writeResponseBodyTo(ostream &fp) const;
             void setHeader(string headerName, string value);
             bool isWriteFromFile() const;
             bool isWriteFromMemory() const;

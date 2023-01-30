@@ -31,12 +31,15 @@ namespace xc {
                 ViewTemplatePrototype& dir(string value);
                 ViewTemplatePrototype& draggable(bool value);
                 ViewTemplatePrototype& hidden(bool value);
+                ViewTemplatePrototype& disabled(bool value);
                 ViewTemplatePrototype& id(string value);
                 ViewTemplatePrototype& lang(string value);
                 ViewTemplatePrototype& spellcheck(bool value);
                 ViewTemplatePrototype& title(string value);
                 ViewTemplatePrototype& href(string value);
+                ViewTemplatePrototype& onclick(string value);
                 ViewTemplatePrototype& name(string value);
+                ViewTemplatePrototype& placeholder(string value);
                 ViewTemplatePrototype& content(string value);
                 ViewTemplatePrototype& rel(string value);
                 ViewTemplatePrototype& type(string value);
@@ -55,14 +58,23 @@ namespace xc {
                 void makeSureNotUseDirectHTML();
             };
 
+            typedef ViewTemplatePrototype View;
             typedef vector<ViewTemplatePrototype> ViewCollection;
             typedef json::value JsonModel;
             typedef JsonModel JsonArrayObject;
 
+            View ContentGeneratorReference(string name, RequestData request);
+
             typedef json::object JsonDictDef;
             typedef json::array JsonArrDef;
 
-            class Foreach: public ViewTemplatePrototype {
+            class If: public View {
+            public:
+                If(bool conditions, ViewCollection then);
+                If(bool conditions, ViewCollection then, ViewCollection else_);
+            };
+
+            class Foreach: public View {
             public:
                 Foreach(vector<JsonModel> model, function<ViewTemplatePrototype (JsonModel)> generateBlock);
                 Foreach(vector<JsonModel> model, function<ViewCollection (JsonModel)> generateBlock);
