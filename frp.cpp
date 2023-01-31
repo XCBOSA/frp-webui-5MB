@@ -17,7 +17,7 @@ using namespace xc::utils;
 
 namespace frp {
 
-    static set<int> profileUsingPorts(string profile) {
+    set<int> profileUsingPorts(string profile) {
         set<int> usingPorts;
         INIFile ini(conf::getFrpcDir() + "/" + profile);
         string value = ini.getMust("common")->get("webui_allowServerPorts");
@@ -35,7 +35,7 @@ namespace frp {
         return usingPorts;
     }
 
-    static set<int> serverUsingPorts(string serverIp) {
+    set<int> serverUsingPorts(string serverIp) {
         set<int> usingPorts;
         for (string file : fs::contentsOfDirectory(conf::getFrpcDir())) {
             INIFile ini(conf::getFrpcDir() + "/" + file);
@@ -49,7 +49,7 @@ namespace frp {
         return usingPorts;
     }
 
-    static void addProfile(string name, string ip, string port, string token) {
+    void addProfile(string name, string ip, string port, string token) {
         INI ini;
         auto frpCommon = ini.getMust("common");
         frpCommon->set("server_addr", ip);
@@ -160,13 +160,13 @@ namespace frp {
     set<string> reloadConfigForFilePathRequests;
     mutex reloadConfigForFilePathRequestsLocker;
 
-    static void reloadProfileFilePath(string filePath) {
+    void reloadProfileFilePath(string filePath) {
         reloadConfigForFilePathRequestsLocker.lock();
         reloadConfigForFilePathRequests.insert(filePath);
         reloadConfigForFilePathRequestsLocker.unlock();
     }
 
-    static void frpDaemon() {
+    void frpDaemon() {
         char readBuff[1024];
         vector<FrpProcessWrapper *> frpProcesses;
         while (true) {

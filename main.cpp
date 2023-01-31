@@ -6,7 +6,7 @@
 #include "processor/processor.h"
 #include "fs.hpp"
 #include "thirdparty/sha256.hpp"
-#include "frp.hpp"
+#include "frp.h"
 
 using namespace xc;
 using namespace xc::httpserver;
