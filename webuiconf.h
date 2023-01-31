@@ -22,26 +22,39 @@ namespace xc::conf {
     const bool enableStaticAssetsController = false;
 
     const string title("Frp-WebUI-XCBOSA");
+    const int allowPortCountPerProfile(10);
 
     const string userPasswordSalt("eDGJ&v,.W0U(66.lVQFsKfWb*bm*M+Lj");
     const string userJWTSecret("r)xB=P-6A4dpqXLk%03=f+*8TlXDM@%r");
-    const string userDataDir = "/etc/frpcwebui/users";
+    const string rootDir = "/etc/frpcwebui";
     const int userTokenExpireSeconds = 60 * 60 * 24;
 
-    inline string getUserDataDir() {
+    inline string getDirAndMakesureExists(string dirPath) {
         struct stat buffer;
-        if (stat(userDataDir.c_str(), &buffer) == 0) {
+        if (stat(dirPath.c_str(), &buffer) == 0) {
             assert(!S_ISREG(buffer.st_mode));
-            return userDataDir;
+            return dirPath;
         }
         mode_t old_mask = umask(0);
-        int n_ret = mkdir(userDataDir.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+        int n_ret = mkdir(dirPath.c_str(), S_IRWXU | S_IRGRP | S_IROTH);
         umask(old_mask);
         if (n_ret != 0) {
             ::perror("");
             assert(n_ret == 0);
         }
-        return userDataDir;
+        return dirPath;
+    }
+
+    inline string getRootDir() {
+        return getDirAndMakesureExists(rootDir);
+    }
+
+    inline string getUserDataDir() {
+        return getDirAndMakesureExists(getRootDir() + "/users");
+    }
+
+    inline string getFrpcDir() {
+        return getDirAndMakesureExists(getRootDir() + "/frpc");
     }
 
     const map<string, string> fileExtensionToMimeTypes = {

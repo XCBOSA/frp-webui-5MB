@@ -19,9 +19,8 @@ string sha256(string str) __attribute__((weak)) {
     const char *c_str = str.c_str();
     __sha256((unsigned char *)c_str, ::strlen(c_str), buff);
     ostringstream oss;
-    oss << hex;
     for (int i = 0; i < 32; i++) {
-        oss << (int)(buff[i]);
+        oss << hex << setiosflags(ios::right) << setw(2) << setfill('0') << (int)(buff[i]);
     }
     return oss.str();
 }

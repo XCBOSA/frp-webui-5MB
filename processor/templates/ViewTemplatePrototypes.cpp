@@ -19,13 +19,6 @@ namespace xc {
                 return src;
             }
 
-            string fixStringFormat(string strToFix) {
-                replace_all(strToFix, "\"", "\\\"");
-                replace_all(strToFix, "\r", "\\\r");
-                replace_all(strToFix, "\n", "\\\n");
-                return strToFix;
-            }
-
 //            string generateInner(ViewTemplatePrototype inner) {
 //                ostringstream oss;
 //                inner.generateHTML(oss);
@@ -59,7 +52,7 @@ namespace xc {
                         for (auto it: this->properties) {
                             writeTo << it.first;
                             writeTo << "=\"";
-                            writeTo << fixStringFormat(it.second);
+                            writeTo << fixStringTransfer(it.second);
                             writeTo << "\" ";
                         }
 

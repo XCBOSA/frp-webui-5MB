@@ -11,6 +11,8 @@
 #include "BinaryResponseData.h"
 #include "INI.h"
 #include "RedirectResponse.h"
+#include "CommandLine.h"
+#include "strop.h"
 
 using namespace std;
 
