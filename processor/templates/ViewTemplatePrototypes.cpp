@@ -361,6 +361,20 @@ namespace xc {
             __GenerateElemImpl_KeySameAsTagName(wbr)
             __GenerateElemImpl_KeySameAsTagName(xmp)
 
+            OnLoadScriptHeader::OnLoadScriptHeader(): script("function addOnLoad(func) {\n"
+                                                             "    let oldOnload = window.onload\n"
+                                                             "    if (typeof window.onload != \"function\") {\n"
+                                                             "      window.onload = func\n"
+                                                             "    } else {\n"
+                                                             "      window.onload = function() {\n"
+                                                             "        oldOnload()\n"
+                                                             "        func()\n"
+                                                             "      }\n"
+                                                             "    }\n"
+                                                             "  }\n") { }
+
+            OnLoadScript::OnLoadScript(string code): script("addOnLoad(function() {" + code + "})") { }
+
         } // xc
     } // processor
 } // templates

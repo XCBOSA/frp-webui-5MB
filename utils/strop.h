@@ -17,6 +17,9 @@ namespace xc {
         string fixStringTransfer(string& src);
         string& trim(string &s);
         string uppercase(string s);
+        int to_int(string s, bool &isSuccess);
+        int to_int(string s, int defaultValue);
+        bool is_in(int value, int minIncluded, int maxExcluded);
 
     } // xc
 } // utils

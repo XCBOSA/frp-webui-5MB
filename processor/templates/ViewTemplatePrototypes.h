@@ -227,6 +227,14 @@ namespace xc {
             __GenerateElemDefs(wbr)
             __GenerateElemDefs(xmp)
 
+            class OnLoadScriptHeader: public script {
+            public: OnLoadScriptHeader();
+            };
+
+            class OnLoadScript: public script {
+            public: OnLoadScript(string code);
+            };
+
 
         } // xc
     } // processor

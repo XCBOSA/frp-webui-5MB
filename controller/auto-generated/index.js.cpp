@@ -38,6 +38,21 @@ namespace xc::controller {
             string("    ]\n") + 
             string("});\n") + 
             string("\n") + 
+            string("function createGuage(elAppendix, valueText, description, value, size) {\n") + 
+            string("    app.gauge.create({\n") + 
+            string("        el: \'.gauge_template_\' + elAppendix,\n") + 
+            string("        type: \'circle\',\n") + 
+            string("        value: value,\n") + 
+            string("        size: size,\n") + 
+            string("        borderColor: \'#2196f3\',\n") + 
+            string("        borderWidth: 10,\n") + 
+            string("        valueText: valueText,\n") + 
+            string("        valueFontSize: 41,\n") + 
+            string("        valueTextColor: \'#2196f3\',\n") + 
+            string("        labelText: description,\n") + 
+            string("    })\n") + 
+            string("}\n") + 
+            string("\n") + 
             string("function doLogin(salt) {\n") + 
             string("    let data = app.form.convertToData(\"#loginForm\")\n") + 
             string("    if (data.username.length == 0) {\n") + 

@@ -58,5 +58,26 @@ namespace xc {
             return oss.str();
         }
 
+        int to_int(string s, bool &isSuccess) {
+            try {
+                isSuccess = true;
+                return stoi(s);
+            } catch (...) {
+                isSuccess = false;
+            }
+        }
+
+        int to_int(string s, int defaultValue) {
+            try {
+                return stoi(s);
+            } catch (...) {
+                return defaultValue;
+            }
+        }
+
+        bool is_in(int value, int minIncluded, int maxExcluded) {
+            return value >= minIncluded && value < maxExcluded;
+        }
+
     } // xc
 } // utils

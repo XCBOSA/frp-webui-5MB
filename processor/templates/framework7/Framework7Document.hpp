@@ -6,6 +6,7 @@
 #define FRPCWEBUI_FRAMEWORK7DOCUMENT_H
 
 #include "../../processor.h"
+#include "../../../webuiconf.h"
 
 namespace xc::processor::templates::framework7 {
     class Framework7Document: public View {
@@ -19,7 +20,8 @@ namespace xc::processor::templates::framework7 {
                     meta().name("theme-color").content("#2196f3"),
                     templates::title(conf::title),
                     link().rel("stylesheet").href("framework7/framework7-bundle.min.css"),
-                    link().rel("stylesheet").href("index.css")
+                    link().rel("stylesheet").href("index.css"),
+                    OnLoadScriptHeader()
                 }),
                 body({
                     div({
@@ -35,6 +37,32 @@ namespace xc::processor::templates::framework7 {
                                 div(tabBarContent).classAdd("toolbar-inner")
                             }).classAdd("toolbar toolbar-bottom"),
                             div(pageContent).classAdd("page-content")
+                        }).prop("data-name", "home").classAdd("page")
+                    }).classAdd("view view-main")
+                }).id("app"),
+                script().type("text/javascript").src("framework7/framework7-bundle.min.js"),
+                script().type("text/javascript").src("index.js"),
+                script().type("text/javascript").src("sha256.js"),
+            });
+            this->inner(html);
+        }
+
+        Framework7Document(ViewCollection pageContent): View({ }) {
+            html html({
+                head({
+                    meta().charset("utf-8"),
+                    meta().name("viewport").content("width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover"),
+                    meta().name("apple-mobile-web-app-capable").content("yes"),
+                    meta().name("theme-color").content("#2196f3"),
+                    templates::title(conf::title),
+                    link().rel("stylesheet").href("framework7/framework7-bundle.min.css"),
+                    link().rel("stylesheet").href("index.css"),
+                    OnLoadScriptHeader()
+                }),
+                body({
+                    div({
+                        div({
+                            pageContent
                         }).prop("data-name", "home").classAdd("page")
                     }).classAdd("view view-main")
                 }).id("app"),
@@ -143,6 +171,21 @@ namespace xc::processor::templates::framework7 {
 
     typedef p Label;
     typedef a Link;
+
+    class GuageView: public div {
+    public:
+        GuageView(string valueText, string description, double value, double size) {
+            int number = std::rand();
+            this->classAdd("gauge gauge_template_" + to_string(number));
+            this->style("display", "block");
+            this->inner({
+                OnLoadScript("createGuage(" + to_string(number) +
+                    ", \"" + fixStringTransfer(valueText) + "\"" +
+                    ", \"" + fixStringTransfer(description) + "\"" +
+                    ", " + to_string(value) + ", " + to_string(size) + ");")
+            });
+        }
+    };
 
 
 

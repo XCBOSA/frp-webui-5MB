@@ -24,6 +24,13 @@ const static strcmd createFrp("frp", "frp <Name> <Server-Addr> <Server-Port> <To
     cout << "成功创建Frpc配置文件 " << args[0] << endl;
 });
 
+const static strcmd assign("assign", "assign <UserName> <Profile>", "使用户有权访问配置文件", 2, [] (auto args) {
+    frp::ProfileInfo profile(args[1]);
+    profile.addUser(args[0]);
+    profile.save();
+    cout << "成功将配置文件 " << args[1] << " 绑定到用户 " << args[0] << endl;
+});
+
 int main(int argc, char **argv) {
     std::cout << "Hello, World!" << std::endl;
 

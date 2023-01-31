@@ -28,6 +28,7 @@ namespace xc::conf {
     const string userJWTSecret("r)xB=P-6A4dpqXLk%03=f+*8TlXDM@%r");
     const string rootDir = "/etc/frpcwebui";
     const int userTokenExpireSeconds = 60 * 60 * 24;
+    const vector<string> supportTypes = { "tcp", "udp" };
 
     inline string getDirAndMakesureExists(string dirPath) {
         struct stat buffer;

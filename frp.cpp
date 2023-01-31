@@ -10,12 +10,13 @@
 #include "fs.hpp"
 #include <signal.h>
 #include <strstream>
+#include "frp.h"
 
 using namespace std;
 using namespace xc;
 using namespace xc::utils;
 
-namespace frp {
+namespace xc::frp {
 
     set<int> profileUsingPorts(string profile) {
         set<int> usingPorts;
@@ -97,6 +98,14 @@ namespace frp {
         }
 
         void update() {
+            struct stat buf;
+            if (stat(this->filePath.c_str(), &buf) == 0) {
+                if (this->mutationTime != buf.st_mtimespec.tv_nsec) {
+                    this->mutationTime = buf.st_mtimespec.tv_nsec;
+                    this->reloadConfig();
+                    return;
+                }
+            }
             if (getRunningPid() == 0) {
                 cout << "[FrpProcessWrapper] [" << fileName << "] Exit unexpectedly, restarting..." << endl;
                 this->doStart();
@@ -134,15 +143,21 @@ namespace frp {
         }
 
         void reloadConfig() {
-            this->stop();
-            this->startAndKeepRunning();
+            cout << "[FrpProcessWrapper] [" << fileName << "] Changes Detected, Reload..." << endl;
+            this->doKill();
+            this->doStart();
         }
 
         bool updated;
         string fileName;
         string filePath;
+        long mutationTime;
     private:
         void doStart() {
+            struct stat buf;
+            if (stat(this->filePath.c_str(), &buf) == 0) {
+                this->mutationTime = buf.st_mtimespec.tv_nsec;
+            }
             ostringstream oss;
             oss << "frpc -c " << this->filePath << " &";
             string launchCmd = oss.str();
@@ -211,6 +226,134 @@ namespace frp {
             }
             usleep(1000 * 1000);
         }
+    }
+
+    ProfilePortInfo::ProfilePortInfo() { }
+
+    ProfilePortInfo::ProfilePortInfo(string localIp, int localPort, int remotePort):
+        localIp(localIp), localPort(localPort), remotePort(remotePort) { }
+
+    ProfileInfo::ProfileInfo() { }
+
+    ProfileInfo::ProfileInfo(string profileName) {
+        this->profileName = profileName;
+        INIFile file(conf::getFrpcDir() + "/" + profileName);
+        for (auto &it : file.data) {
+            if (it.getTitle() == "common") {
+                this->serverAddr = it.get("server_addr");
+                this->serverPort = to_int(it.get("server_port"), 0);
+                this->token = it.get("token");
+                string users = it.get("webui_availableForUsers");
+                for (auto it : split(users, "/")) {
+                    trim(it);
+                    if (!it.empty()) {
+                        this->users.insert(it);
+                    }
+                }
+                string allowPortStr = it.get("webui_allowServerPorts");
+                auto list = split(allowPortStr, ",");
+                if (list.size() == 2) {
+                    this->allowPortLow = to_int(list[0], 0);
+                    this->allowPortCount = to_int(list[1], 0);
+                }
+            } else {
+                string type = it.get("type");
+                string localIp = it.get("local_ip");
+                bool success;
+                int localPort = to_int(it.get("local_port"), success);
+                if (!success || is_in(localPort, 0, 65536)) { continue; }
+                int remotePort = to_int(it.get("remote_port"), success);
+                if (!success || is_in(localPort, 0, 65536)) { continue; }
+                if (type == "tcp" || type == "udp") {
+                    bool alreadyHave = false;
+                    for (auto v : this->ports) {
+                        if (v.remotePort == remotePort) {
+                            alreadyHave = true;
+                        }
+                    }
+                    if (alreadyHave) { continue; }
+                    this->ports.push_back(ProfilePortInfo(localIp, localPort, remotePort));
+                }
+            }
+        }
+    }
+
+    void ProfileInfo::addPortInfo(ProfilePortInfo portInfo) {
+        for (auto &port : this->ports) {
+            if (port.remotePort == portInfo.remotePort) {
+                port.localPort = portInfo.localPort;
+                port.localIp = portInfo.localIp;
+                return;
+            }
+        }
+        this->ports.insert(this->ports.begin(), portInfo);
+    }
+
+    void ProfileInfo::removePort(int remotePort) {
+        std::remove_if(this->ports.begin(), this->ports.end(), [&](const auto &item) {
+            return item.remotePort == remotePort;
+        });
+    }
+
+    string ProfileInfo::getServerAddr() { return this->serverAddr; }
+
+    int ProfileInfo::getAllowPortLow() { return this->allowPortLow; }
+
+    int ProfileInfo::getAllowPortCount() { return this->allowPortCount; }
+
+    void ProfileInfo::save() const {
+        string path = conf::getFrpcDir() + "/" + this->profileName;
+        INIFile ini(path);
+        ini.getMust("common")->set("server_addr", this->serverAddr);
+        ini.getMust("common")->set("server_port", to_string(this->serverPort));
+        ini.getMust("common")->set("server_token", this->token);
+        ini.getMust("common")->set("tls_enable", "true");
+        ostringstream usersOss;
+        for (auto user : this->users) {
+            usersOss << user;
+            usersOss << "/";
+        }
+        ini.getMust("common")->set("webui_availableForUsers", usersOss.str());
+        ostringstream oss;
+        oss << this->allowPortLow << "," << this->allowPortCount;
+        ini.getMust("common")->set("webui_allowServerPorts", oss.str());
+        ini.data.clear();
+        for (auto port : this->ports) {
+            for (auto type : conf::supportTypes) {
+                ostringstream titleOss;
+                titleOss << "frpc-webui-" << port.remotePort << "-" << type;
+                ini.getMust(titleOss.str())->set("type", type);
+                ini.getMust(titleOss.str())->set("local_ip", port.localIp);
+                ini.getMust(titleOss.str())->set("local_port", to_string(port.localPort));
+                ini.getMust(titleOss.str())->set("remote_port", to_string(port.remotePort));
+                ini.getMust(titleOss.str())->set("use_encryption", "true");
+                ini.getMust(titleOss.str())->set("use_compression", "true");
+            }
+        }
+        ini.save();
+    }
+
+    void ProfileInfo::addUser(string name) {
+        this->users.insert(name);
+    }
+
+    void ProfileInfo::removeUser(string name) {
+        this->users.erase(name);
+    }
+
+    bool ProfileInfo::availableForUser(string name) {
+        return this->users.count(name) > 0;
+    }
+
+    vector<ProfileInfo> listUserAvailableProfiles(string user) {
+        vector<ProfileInfo> profiles;
+        for (auto profile : fs::contentsOfDirectory(conf::getFrpcDir())) {
+            ProfileInfo profileInfo(profile);
+            if (profileInfo.availableForUser(user)) {
+                profiles.push_back(profileInfo);
+            }
+        }
+        return profiles;
     }
 
 }

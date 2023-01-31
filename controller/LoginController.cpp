@@ -7,6 +7,7 @@
 #include "../processor/templates/framework7/Framework7Document.hpp"
 #include "../fs.hpp"
 #include "../user.hpp"
+#include "../view/view.h"
 
 using namespace std;
 using namespace xc::processor;
@@ -20,7 +21,7 @@ namespace xc::controller {
         return new TemplateResponseData({
             Framework7Document({
                 If(request.getCookie("Token") == "loginFailed", {
-                    script("window.onload = function() { app.dialog.alert('登陆失败，请检查用户名或密码') }")
+                    OnLoadScript("app.dialog.alert('登陆失败，请检查用户名或密码')")
                 }),
                 BlockTitleView("需要登陆"),
                 FormView({

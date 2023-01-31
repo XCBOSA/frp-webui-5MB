@@ -40,7 +40,6 @@ namespace xc {
             void remove(string header);
 
             string getINIString();
-        private:
             vector<INISection> data;
         };
 
