@@ -21,6 +21,10 @@ namespace xc::conf {
     const int mtu = 1536;
     const bool enableStaticAssetsController = false;
 
+    const string natMachineIPPrefix = "10.";
+    const int natMachineLocalhostPortBegin = 50000;
+    const int natMachineLocalhostPortSize = 10000;
+
     const string title("Frp-WebUI-XCBOSA");
     const int allowPortCountPerProfile(10);
 
