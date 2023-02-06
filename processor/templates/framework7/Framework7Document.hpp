@@ -91,7 +91,7 @@ namespace xc::processor::templates::framework7 {
 
     class FormInputView: public FormItemView {
     public:
-        FormInputView(string keyName, string displayName, string contentType, string placeholder): FormItemView({
+        FormInputView(string keyName, string displayName, string contentType, string placeholder, string value): FormItemView({
             div({
                 div({
                     div(displayName).classAdd("item-title item-label"),
@@ -100,7 +100,22 @@ namespace xc::processor::templates::framework7 {
                             .type(contentType)
                             .name(keyName)
                             .placeholder(placeholder)
+                            .value(value)
                     }).classAdd("item-input-wrap")
+                }).classAdd("item-inner")
+            }).classAdd("item-content item-input")
+        }) { }
+
+        FormInputView(string keyName, string displayName, string contentType, string placeholder): FormInputView(keyName, displayName, contentType, placeholder, "") { }
+    };
+
+    class FormCustomInputView: public FormItemView {
+    public:
+        FormCustomInputView(string displayName, ViewCollection inner): FormItemView({
+            div({
+                div({
+                    div(displayName).classAdd("item-title item-label"),
+                    div(inner).classAdd("item-input-wrap")
                 }).classAdd("item-inner")
             }).classAdd("item-content item-input")
         }) { }

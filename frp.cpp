@@ -11,6 +11,10 @@
 #include <signal.h>
 #include <strstream>
 #include "frp.h"
+#include <iomanip>
+#include <chrono>
+#include <functional>
+#include <random>
 
 using namespace std;
 using namespace xc;
@@ -228,16 +232,30 @@ namespace xc::frp {
         }
     }
 
+    static string create_uuid() {
+        ostringstream stream;
+        auto random_seed = std::chrono::system_clock::now().time_since_epoch().count();
+        std::mt19937 seed_engine(random_seed);
+        std::uniform_int_distribution<std::size_t> random_gen;
+        std::size_t value = random_gen(seed_engine);
+        stream << hex << value;
+        return stream.str();
+    }
+
     ProfilePortInfo::ProfilePortInfo() { }
 
     ProfilePortInfo::ProfilePortInfo(string localIp, int localPort, int remotePort):
-        localIp(localIp), localPort(localPort), remotePort(remotePort) { }
+        localIp(localIp), localPort(localPort), remotePort(remotePort), uuid(create_uuid()) { }
+
+    ProfilePortInfo::ProfilePortInfo(string localIp, int localPort, int remotePort, string uuid):
+        localIp(localIp), localPort(localPort), remotePort(remotePort), uuid(uuid) { }
 
     ProfileInfo::ProfileInfo() { }
 
     ProfileInfo::ProfileInfo(string profileName) {
         this->profileName = profileName;
         INIFile file(conf::getFrpcDir() + "/" + profileName);
+        bool needSave = false;
         for (auto &it : file.data) {
             if (it.getTitle() == "common") {
                 this->serverAddr = it.get("server_addr");
@@ -261,9 +279,15 @@ namespace xc::frp {
                 string localIp = it.get("local_ip");
                 bool success;
                 int localPort = to_int(it.get("local_port"), success);
-                if (!success || is_in(localPort, 0, 65536)) { continue; }
+                if (!success || !is_in(localPort, 0, 65536)) { continue; }
                 int remotePort = to_int(it.get("remote_port"), success);
-                if (!success || is_in(localPort, 0, 65536)) { continue; }
+                if (!success || !is_in(localPort, 0, 65536)) { continue; }
+                string id = it.get("id");
+                if (id.empty()) {
+                    id = create_uuid();
+                    needSave = true;
+                }
+                it.set("id", id);
                 if (type == "tcp" || type == "udp") {
                     bool alreadyHave = false;
                     for (auto v : this->ports) {
@@ -272,10 +296,62 @@ namespace xc::frp {
                         }
                     }
                     if (alreadyHave) { continue; }
-                    this->ports.push_back(ProfilePortInfo(localIp, localPort, remotePort));
+                    this->ports.push_back(ProfilePortInfo(localIp, localPort, remotePort, id));
                 }
             }
         }
+        if (needSave) {
+            file.save();
+        }
+    }
+
+    int ProfileInfo::getFirstFreeRemotePort() {
+        set<int> usingPorts;
+        for (auto port : this->ports) {
+            usingPorts.insert(port.remotePort);
+        }
+        for (int i = this->allowPortLow; i < this->allowPortLow + this->allowPortCount; i++) {
+            if (!usingPorts.count(i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    int ProfileInfo::getFirstFreeRemotePort(int ifNoneThenReturn) {
+        int value = getFirstFreeRemotePort();
+        if (value == -1) return ifNoneThenReturn;
+        return value;
+    }
+
+    vector<int> ProfileInfo::getFreeRemotePorts() {
+        return getFreeRemotePorts(65536);
+    }
+
+    vector<int> ProfileInfo::getFreeRemotePorts(int maxCnt) {
+        set<int> usingPorts;
+        vector<int> res;
+        for (auto port : this->ports) {
+            usingPorts.insert(port.remotePort);
+        }
+        int cnt = 0;
+        for (int i = this->allowPortLow; i < this->allowPortLow + this->allowPortCount; i++) {
+            if (!usingPorts.count(i)) {
+                res.push_back(i);
+                cnt++;
+                if (cnt >= maxCnt) {
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+
+    vector<int> ProfileInfo::getFreeRemotePortsAndAppend(int me) {
+        vector<int> ports = getFreeRemotePorts();
+        ports.push_back(me);
+        std::sort(ports.begin(), ports.end());
+        return ports;
     }
 
     void ProfileInfo::addPortInfo(ProfilePortInfo portInfo) {
@@ -290,9 +366,12 @@ namespace xc::frp {
     }
 
     void ProfileInfo::removePort(int remotePort) {
-        std::remove_if(this->ports.begin(), this->ports.end(), [&](const auto &item) {
-            return item.remotePort == remotePort;
-        });
+        for (auto ptr = this->ports.begin(); ptr != this->ports.end(); ptr++) {
+            if (ptr->remotePort == remotePort) {
+                this->ports.erase(ptr);
+                return;
+            }
+        }
     }
 
     string ProfileInfo::getServerAddr() { return this->serverAddr; }
@@ -304,9 +383,10 @@ namespace xc::frp {
     void ProfileInfo::save() const {
         string path = conf::getFrpcDir() + "/" + this->profileName;
         INIFile ini(path);
+        ini.data.clear();
         ini.getMust("common")->set("server_addr", this->serverAddr);
         ini.getMust("common")->set("server_port", to_string(this->serverPort));
-        ini.getMust("common")->set("server_token", this->token);
+        ini.getMust("common")->set("token", this->token);
         ini.getMust("common")->set("tls_enable", "true");
         ostringstream usersOss;
         for (auto user : this->users) {
@@ -317,7 +397,6 @@ namespace xc::frp {
         ostringstream oss;
         oss << this->allowPortLow << "," << this->allowPortCount;
         ini.getMust("common")->set("webui_allowServerPorts", oss.str());
-        ini.data.clear();
         for (auto port : this->ports) {
             for (auto type : conf::supportTypes) {
                 ostringstream titleOss;
@@ -354,6 +433,17 @@ namespace xc::frp {
             }
         }
         return profiles;
+    }
+
+    vector<string> listingAvailableServerAndPortForUser(string username) {
+        auto profiles = listUserAvailableProfiles(username);
+        vector<string> items;
+        for (auto profile : profiles) {
+            for (auto port : profile.getFreeRemotePorts()) {
+                items.push_back(profile.getServerAddr() + ":" + to_string(port));
+            }
+        }
+        return items;
     }
 
 }

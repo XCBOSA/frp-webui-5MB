@@ -22,14 +22,18 @@ namespace xc::frp {
     set<int> serverUsingPorts(string serverIp);
     void addProfile(string name, string ip, string port, string token);
 
+    vector<string> listingAvailableServerAndPortForUser(string username);
+
     class ProfilePortInfo {
     public:
         ProfilePortInfo();
         ProfilePortInfo(string localIp, int localPort, int remotePort);
+        ProfilePortInfo(string localIp, int localPort, int remotePort, string uuid);
         string localIp;
         int localPort;
         int remotePort;
-        CONFIGOR_BIND(json::value, ProfilePortInfo, REQUIRED(localIp), REQUIRED(localPort), REQUIRED(remotePort))
+        string uuid;
+        CONFIGOR_BIND(json::value, ProfilePortInfo, REQUIRED(localIp), REQUIRED(localPort), REQUIRED(remotePort), REQUIRED(uuid))
     };
 
     class ProfileInfo {
@@ -45,6 +49,11 @@ namespace xc::frp {
         void addUser(string name);
         void removeUser(string name);
         void save() const;
+        int getFirstFreeRemotePort();
+        int getFirstFreeRemotePort(int ifNoneThenReturn);
+        vector<int> getFreeRemotePorts();
+        vector<int> getFreeRemotePorts(int maxCnt);
+        vector<int> getFreeRemotePortsAndAppend(int me);
         CONFIGOR_BIND(json::value, ProfileInfo,
                       REQUIRED(users),
                       REQUIRED(profileName),

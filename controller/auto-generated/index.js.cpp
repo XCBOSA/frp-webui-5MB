@@ -1,5 +1,5 @@
 //
-// Created by xcbosa on 2023-01-31
+// Created by xcbosa on 2023-02-06
 //
 
 #include "../../processor/processor.h"
@@ -66,6 +66,54 @@ namespace xc::controller {
             string("    data.password = sha256_digest(data.password + salt)\n") + 
             string("    window.location = \"/login?v=\" + JSON.stringify(data)\n") + 
             string("    return\n") + 
+            string("}\n") + 
+            string("\n") + 
+            string("function isValidIP(ip) {\n") + 
+            string("    let reg = /^(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])$/\n") + 
+            string("    return reg.test(ip)\n") + 
+            string("}\n") + 
+            string("\n") + 
+            string("function doModify(uuid) {\n") + 
+            string("    let data = app.form.convertToData(\"#modifyForm_\" + uuid)\n") + 
+            string("    if (!isValidIP(data.address)) {\n") + 
+            string("        app.dialog.alert(\"IP地址格式错误，请重新填写。\")\n") + 
+            string("        return\n") + 
+            string("    }\n") + 
+            string("    if (data.port < 0 && data.port >= 65536) {\n") + 
+            string("        app.dialog.alert(\"内部端口号必须在0-65535范围内。\")\n") + 
+            string("        return\n") + 
+            string("    }\n") + 
+            string("    window.location = \"/changePortSettings?v=\" + JSON.stringify(data)\n") + 
+            string("    return\n") + 
+            string("}\n") + 
+            string("\n") + 
+            string("function doCreate() {\n") + 
+            string("    let data = app.form.convertToData(\"#createNewForm\")\n") + 
+            string("    if (data.address == \"\") {\n") + 
+            string("        app.dialog.alert(\"请填写内部IP地址。\")\n") + 
+            string("        return\n") + 
+            string("    }\n") + 
+            string("    if (!isValidIP(data.address)) {\n") + 
+            string("        app.dialog.alert(\"IP地址格式错误，请重新填写。\")\n") + 
+            string("        return\n") + 
+            string("    }\n") + 
+            string("    if (data.port == \"\") {\n") + 
+            string("        app.dialog.alert(\"请填写内部端口。\")\n") + 
+            string("        return\n") + 
+            string("    }\n") + 
+            string("    if (data.port < 0 && data.port >= 65536) {\n") + 
+            string("        app.dialog.alert(\"内部端口号必须在0-65535范围内。\")\n") + 
+            string("        return\n") + 
+            string("    }\n") + 
+            string("    window.location = \"/createPort?v=\" + JSON.stringify(data)\n") + 
+            string("    return\n") + 
+            string("}\n") + 
+            string("\n") + 
+            string("function doDelete(uuid) {\n") + 
+            string("    let req = {\n") + 
+            string("        \"uuid\": uuid\n") + 
+            string("    }\n") + 
+            string("    window.location = \"/removePort?v=\" + JSON.stringify(req)\n") + 
             string("}\n")
         , mimeTypeOfFile(ControllerPath));
     }

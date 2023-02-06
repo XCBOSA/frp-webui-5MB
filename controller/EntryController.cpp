@@ -17,7 +17,7 @@ namespace xc::controller {
 
     ResponseData *EntryController(RequestData request) {
         bool isUserLogin = user::isLogin(request.getCookie("Token"));
-        auto data = new TemplateResponseData({
+        auto resp = new TemplateResponseData({
             If(isUserLogin, {
                 ContentGeneratorReference("PortListController", request)
             }, {
@@ -25,9 +25,10 @@ namespace xc::controller {
             })
         });
         if (!isUserLogin) {
-            data->addCookie("Token", "");
+            resp->addCookie("Token", "");
         }
-        return data;
+        resp->addCookie("message", "");
+        return resp;
     }
 
     ContentGeneratorDefineS(request.getURLPath() == "/", EntryController(request))
