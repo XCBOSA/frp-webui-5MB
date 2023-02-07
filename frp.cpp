@@ -110,9 +110,17 @@ namespace xc::frp {
                     return;
                 }
             }
+            INIFile profileINI(this->filePath);
+            bool shouldRunning = profileINI.data.size() > 1;
             if (getRunningPid() == 0) {
-                cout << "[FrpProcessWrapper] [" << fileName << "] Exit unexpectedly, restarting..." << endl;
-                this->doStart();
+                if (shouldRunning) {
+                    cout << "[FrpProcessWrapper] [" << fileName << "] Exit unexpectedly, restarting..." << endl;
+                    this->doStart();
+                }
+            } else {
+                if (!shouldRunning) {
+                    this->doKill();
+                }
             }
         }
 
@@ -161,6 +169,10 @@ namespace xc::frp {
             struct stat buf;
             if (stat(this->filePath.c_str(), &buf) == 0) {
                 this->mutationTime = buf.st_mtime;
+            }
+            INIFile profileINI(this->filePath);
+            if (profileINI.data.size() < 2) {
+                return;
             }
             ostringstream oss;
             oss << "frpc -c " << this->filePath << " &";

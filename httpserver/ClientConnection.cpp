@@ -66,6 +66,11 @@ namespace xc {
                 bool lastLineIsEmpty = false;
                 bool lastLineEmptyAndZero = false;
                 while (::fgets(requestBuff, urlRequestBuffSize, clRead)) {
+                    if (method == "GET") {
+                        if (strcmp(requestBuff, "\r\n") == 0) {
+                            break;
+                        }
+                    }
                     int len = ::strlen(requestBuff);
                     char *lineBuff = (char *) ::malloc(len + 1), *pLineBuff = lineBuff;
                     bool leftHasContext = false;
@@ -89,16 +94,16 @@ namespace xc {
                     }
                     if (::strlen(lineBuff) == 0) {
                         // TODO: Fix Linux POST Method
-//                        isHeader = false;
-//                        lastLineIsEmpty = true;
-//                        if (lastLineEmptyAndZero) {
-//                            break;
-//                        } else {
-//                            lastLineEmptyAndZero = false;
-//                        }
-//                        if (method == "GET") {
+                        isHeader = false;
+                        lastLineIsEmpty = true;
+                        if (lastLineEmptyAndZero) {
                             break;
-//                        }
+                        } else {
+                            lastLineEmptyAndZero = false;
+                        }
+                        if (method == "GET") {
+                            break;
+                        }
                         continue;
                     }
                     if (lineBuff[0] == '0') {

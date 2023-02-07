@@ -57,18 +57,18 @@ namespace xc {
 
         void TextResponseData::writeTo(::FILE *fp) const {
             ::fprintf(fp, "HTTP/1.1 %d XCHttpServer\r\n", this->statusCode);
-            map<string, string> headers(this->headers);
             if (!this->cookies.empty()) {
-                ostringstream oss;
                 for (auto it : this->cookies) {
+                    ostringstream oss;
                     oss << it.first;
                     oss << "=";
                     oss << it.second;
-                    oss << "; ";
+                    oss << "; Path=/";
+                    string str = oss.str();
+                    ::fprintf(fp, "%s: %s\r\n", "Set-Cookie", str.c_str());
                 }
-                headers["Set-Cookie"] = oss.str();
             }
-            for (auto item : headers) {
+            for (auto item : this->headers) {
                 ::fprintf(fp, "%s: %s\r\n", item.first.c_str(), item.second.c_str());
             }
             ::fputs("\r\n", fp);
