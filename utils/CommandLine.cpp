@@ -47,6 +47,10 @@ namespace xc {
             while (true) {
                 bzero(cinReadBuff, sizeof(cinReadBuff));
                 cin.getline(cinReadBuff, sizeof(cinReadBuff));
+                if (cin.eof() || cin.bad() || cin.fail()) {
+                    cout << "Frp-WebUI interactive command disabled during stdin is closed." << endl;
+                    return;
+                }
                 string str(cinReadBuff);
                 if (str.empty()) continue;
                 auto list = split(str, " ");
