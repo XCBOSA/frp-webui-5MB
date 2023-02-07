@@ -67,4 +67,8 @@ int main(int argc, char **argv) {
 
     CommandLineWorker cmdLine;
     cmdLine.workerLoop();
+
+    while (true) {
+        sleep(1000);
+    }
 }
