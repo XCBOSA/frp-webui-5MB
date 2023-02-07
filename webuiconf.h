@@ -21,9 +21,32 @@ namespace xc::conf {
     const int mtu = 1536;
     const bool enableStaticAssetsController = false;
 
+    // 如果你的部分虚拟机是NAT网卡，装好brook，填写下面的字段
+    // 如果你想用iptables，请自行修改代码，很简单的，但我不会用所以我用brook
+    // 会自动的将用户的10.x.x.x:端口的IP地址先使用brook转发到本机::端口上，然后在frpc转发到本机
+    // 当然，并不影响独立IP虚拟机的端口转发，他们不满足10.x.x.x规则
+    // 如此优雅。
     const string natMachineIPPrefix = "10.";
     const int natMachineLocalhostPortBegin = 50000;
     const int natMachineLocalhostPortSize = 10000;
+
+    static queue<int> __natMachineLocalhostPortFreeList;
+    static int __natMachineLocalhostPortAllocator = natMachineLocalhostPortBegin;
+
+    /*分配NAT映射端口*/
+    static int natMachineLocalhostPortAllocate() {
+        if (__natMachineLocalhostPortFreeList.empty()) {
+            int allocated = __natMachineLocalhostPortAllocator++;
+            assert(allocated < natMachineLocalhostPortBegin + natMachineLocalhostPortSize);
+        }
+        int port = __natMachineLocalhostPortFreeList.front();
+        return port;
+    }
+
+    /*释放NAT映射端口*/
+    static int natMachineLocalhostPortFree(int port) {
+        __natMachineLocalhostPortFreeList.push(port);
+    }
 
     const string title("Frp-WebUI-XCBOSA");
     const int allowPortCountPerProfile(10);
