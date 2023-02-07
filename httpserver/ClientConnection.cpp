@@ -88,16 +88,17 @@ namespace xc {
                         }
                     }
                     if (::strlen(lineBuff) == 0) {
-                        isHeader = false;
-                        lastLineIsEmpty = true;
-                        if (lastLineEmptyAndZero) {
+                        // TODO: Fix Linux POST Method
+//                        isHeader = false;
+//                        lastLineIsEmpty = true;
+//                        if (lastLineEmptyAndZero) {
+//                            break;
+//                        } else {
+//                            lastLineEmptyAndZero = false;
+//                        }
+//                        if (method == "GET") {
                             break;
-                        } else {
-                            lastLineEmptyAndZero = false;
-                        }
-                        if (method == "GET") {
-                            break;
-                        }
+//                        }
                         continue;
                     }
                     if (lineBuff[0] == '0') {
