@@ -13,6 +13,7 @@
 #include <sstream>
 #include <fstream>
 #include <functional>
+#include <assert.h>
 
 using namespace std;
 

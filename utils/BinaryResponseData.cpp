@@ -4,6 +4,7 @@
 
 #include "BinaryResponseData.h"
 #include "../webuiconf.h"
+#include <string.h>
 
 namespace xc {
     namespace utils {

@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <functional>
+#include <assert.h>
 #include "../webui.h"
 
 using namespace std;
