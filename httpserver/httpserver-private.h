@@ -19,6 +19,7 @@
 #include <time.h>
 #include <functional>
 #include <assert.h>
+#include <string.h>
 #include "../webui.h"
 
 using namespace std;
