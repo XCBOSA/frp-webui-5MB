@@ -104,8 +104,8 @@ namespace xc::frp {
         void update() {
             struct stat buf;
             if (stat(this->filePath.c_str(), &buf) == 0) {
-                if (this->mutationTime != buf.st_mtimespec.tv_nsec) {
-                    this->mutationTime = buf.st_mtimespec.tv_nsec;
+                if (this->mutationTime != buf.st_mtime) {
+                    this->mutationTime = buf.st_mtime;
                     this->reloadConfig();
                     return;
                 }
@@ -160,7 +160,7 @@ namespace xc::frp {
         void doStart() {
             struct stat buf;
             if (stat(this->filePath.c_str(), &buf) == 0) {
-                this->mutationTime = buf.st_mtimespec.tv_nsec;
+                this->mutationTime = buf.st_mtime;
             }
             ostringstream oss;
             oss << "frpc -c " << this->filePath << " &";
