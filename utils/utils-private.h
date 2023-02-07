@@ -12,6 +12,7 @@
 #include <mutex>
 #include <sstream>
 #include <fstream>
+#include <functional>
 
 using namespace std;
 

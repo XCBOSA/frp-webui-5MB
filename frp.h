@@ -6,6 +6,7 @@
 
 #include <string>
 #include <set>
+#include <functional>
 
 using namespace std;
 using namespace xc;

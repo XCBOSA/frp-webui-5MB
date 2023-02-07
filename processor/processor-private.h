@@ -14,6 +14,7 @@
 #include <sstream>
 #include <fstream>
 #include <unistd.h>
+#include <functional>
 #include "../thirdparty/configor/json.hpp"
 
 #include "../utils/utils.h"

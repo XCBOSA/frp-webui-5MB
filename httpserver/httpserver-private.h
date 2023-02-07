@@ -17,6 +17,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <time.h>
+#include <functional>
 #include "../webui.h"
 
 using namespace std;

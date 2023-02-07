@@ -69,7 +69,7 @@ namespace xc {
                     }
                     ::fprintf(fp, "0\r\n\r\n");
                 } else {
-                    cerr << "[FileIOError]: " << ::strerror(errno) << endl;
+                    cerr << "[FileIOError]: " << strerror(errno) << endl;
                 }
             }
             ::fflush(fp);
@@ -94,7 +94,7 @@ namespace xc {
                         }
                     }
                 } else {
-                    cerr << "[FileIOError]: " << ::strerror(errno) << endl;
+                    cerr << "[FileIOError]: " << strerror(errno) << endl;
                 }
             }
         }
