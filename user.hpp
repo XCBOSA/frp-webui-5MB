@@ -18,7 +18,7 @@ using namespace xc::utils;
 
 namespace user {
 
-    inline string generateToken(string payload) __attribute__((weak)) {
+    static string generateToken(string payload) {
         ostringstream oss;
         oss << payload;
         oss << "/";
@@ -30,7 +30,7 @@ namespace user {
         return oss.str();
     }
 
-    inline string tryLogin(string username, string password) __attribute__((weak)) {
+    static string tryLogin(string username, string password) {
         string userInfoFile = conf::getUserDataDir() + "/" + username;
         if (fs::existsFile(userInfoFile)) {
             INIFile ini(userInfoFile);
@@ -42,7 +42,7 @@ namespace user {
         return "loginFailed";
     }
 
-    inline string getTokenUserName(string token) __attribute__((weak)) {
+    static string getTokenUserName(string token) {
         auto list = split(token, "/");
         if (list.size() != 3) {
             return "";
@@ -76,7 +76,7 @@ namespace user {
         return username;
     }
 
-    inline bool isLogin(string token) __attribute__((weak)) {
+    static bool isLogin(string token) {
         return !getTokenUserName(token).empty();
     }
 

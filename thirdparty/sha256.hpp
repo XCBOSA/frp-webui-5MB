@@ -11,9 +11,9 @@
 
 using namespace std;
 
-void __sha256(const unsigned char *data, size_t len, unsigned char *out) __attribute__((weak));
+static void __sha256(const unsigned char *data, size_t len, unsigned char *out);
 
-string sha256(string str) __attribute__((weak)) {
+static string sha256(string str) {
     unsigned char buff[32];
     ::memset(buff, 0, 32);
     const char *c_str = str.c_str();
@@ -45,7 +45,7 @@ static const uint32_t k[64] = {
         0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
 
-void __sha256(const unsigned char *data, size_t len, unsigned char *out) __attribute__((weak)) {
+static void __sha256(const unsigned char *data, size_t len, unsigned char *out) {
     uint32_t h0 = 0x6a09e667;
     uint32_t h1 = 0xbb67ae85;
     uint32_t h2 = 0x3c6ef372;
