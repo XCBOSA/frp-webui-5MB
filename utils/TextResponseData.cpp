@@ -89,7 +89,7 @@ namespace xc {
                 ::fprintf(fp, "\r\n");
                 cursor += writeSize;
             }
-            ::fprintf(fp, "0\r\n\r\n");
+            ::fprintf(fp, "0\r\n\r\n\r\n");
             ::fflush(fp);
         }
 

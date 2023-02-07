@@ -65,7 +65,7 @@ namespace xc {
                 bool isHeader = true;
                 bool lastLineIsEmpty = false;
                 bool lastLineEmptyAndZero = false;
-                while (::fgets(requestBuff, urlRequestBuffSize, clRead)) {
+                while (bzero(requestBuff, urlRequestBuffSize), ::fgets(requestBuff, urlRequestBuffSize, clRead)) {
                     if (method == "GET") {
                         if (strcmp(requestBuff, "\r\n") == 0) {
                             break;

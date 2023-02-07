@@ -125,12 +125,11 @@ namespace xc::frp {
         }
 
         int getRunningPid() {
-            ::FILE *psStdoutFd = popen("ps -ef", "r");
+            ::FILE *psStdoutFd = popen("ps -ef --columns 1000 | grep frpc | grep -v grep", "r");
             ostringstream oss;
-            while (true) {
-                int ch = ::fgetc(psStdoutFd);
-                if (ch == -1) break;
-                oss << (char) ch;
+            char buff[1024];
+            while (::fgets(buff, sizeof(buff), psStdoutFd)) {
+                oss << buff;
             }
             ::pclose(psStdoutFd);
             string str = oss.str();
@@ -198,6 +197,7 @@ namespace xc::frp {
     }
 
     void frpDaemon() {
+        ::system("killall frpc");
         char readBuff[1024];
         vector<FrpProcessWrapper *> frpProcesses;
         while (true) {
