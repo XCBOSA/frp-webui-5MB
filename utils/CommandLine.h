@@ -35,6 +35,7 @@ namespace xc {
         class CommandLineWorker {
         public:
             void workerLoop();
+            void processCommand(string cmd);
         };
 
     } // xc

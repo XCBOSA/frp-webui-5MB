@@ -32,11 +32,22 @@ const static strcmd assign("assign", "assign <UserName> <Profile>", "使用户�
 });
 
 int main(int argc, char **argv) {
-    std::cout << "Hello, World!" << std::endl;
+    std::cout << "FRPC WebUI HelloWorld!" << std::endl;
+    CommandLineWorker cmdLine;
 
     conf::getRootDir();
     conf::getUserDataDir();
     conf::getFrpcDir();
+
+    if (argc > 1) {
+        ostringstream cmd;
+        for (int i = 1; i < argc; i++) {
+            cmd << argv[i];
+            cmd << " ";
+        }
+        cmdLine.processCommand(cmd.str());
+        return 0;
+    }
 
     ostringstream oss;
     oss << "ps -ef | grep " << argv[0] << " | grep -v grep";
@@ -65,7 +76,6 @@ int main(int argc, char **argv) {
 
     thread([] { frp::frpDaemon(); }).detach();
 
-    CommandLineWorker cmdLine;
     cmdLine.workerLoop();
 
     while (true) {

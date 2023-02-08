@@ -42,6 +42,30 @@ namespace xc {
             }
         }
 
+        void CommandLineWorker::processCommand(string cmd) {
+            auto list = split(cmd, " ");
+            string titleUppercase = uppercase(list[0]);
+            if (titleUppercase == "HELP") {
+                cout << "Frp-WebUI Command List" << endl;
+                for (int i = 0; i < registeredCommandsId; i++) {
+                    cout << registeredCommands[i]->message << " : " << registeredCommands[i]->commandUsage << endl;
+                }
+            } else {
+                bool founded = false;
+                for (int i = 0; i < registeredCommandsId; i++) {
+                    auto command = registeredCommands[i];
+                    if (uppercase(command->commandName) == titleUppercase) {
+                        command->evaluate(cmd);
+                        founded = true;
+                        break;
+                    }
+                }
+                if (!founded) {
+                    cerr << "Command " << list[0] << " not founded, type help to view help." << endl;
+                }
+            }
+        }
+
         void CommandLineWorker::workerLoop() {
             char cinReadBuff[1024];
             while (true) {
@@ -53,27 +77,7 @@ namespace xc {
                 }
                 string str(cinReadBuff);
                 if (str.empty()) continue;
-                auto list = split(str, " ");
-                string titleUppercase = uppercase(list[0]);
-                if (titleUppercase == "HELP") {
-                    cout << "Frp-WebUI Command List" << endl;
-                    for (int i = 0; i < registeredCommandsId; i++) {
-                        cout << registeredCommands[i]->message << " : " << registeredCommands[i]->commandUsage << endl;
-                    }
-                } else {
-                    bool founded = false;
-                    for (int i = 0; i < registeredCommandsId; i++) {
-                        auto command = registeredCommands[i];
-                        if (uppercase(command->commandName) == titleUppercase) {
-                            command->evaluate(str);
-                            founded = true;
-                            break;
-                        }
-                    }
-                    if (!founded) {
-                        cerr << "Command " << list[0] << " not founded, type help to view help." << endl;
-                    }
-                }
+                this->processCommand(str);
                 cin.clear();
                 usleep(1000 * 10);
             }

@@ -125,7 +125,11 @@ namespace xc::frp {
         }
 
         int getRunningPid() {
+#if __APPLE__
+            ::FILE *psStdoutFd = popen("ps -ef | grep frpc | grep -v grep", "r");
+#elif __linux__
             ::FILE *psStdoutFd = popen("ps -ef --columns 1000 | grep frpc | grep -v grep", "r");
+#endif
             ostringstream oss;
             char buff[1024];
             while (::fgets(buff, sizeof(buff), psStdoutFd)) {
