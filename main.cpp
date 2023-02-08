@@ -31,6 +31,65 @@ const static strcmd assign("assign", "assign <UserName> <Profile>", "使用户�
     cout << "成功将配置文件 " << args[1] << " 绑定到用户 " << args[0] << endl;
 });
 
+int call_shell(string cmd) {
+    cout << "$ " << cmd << endl;
+    ::system(cmd.c_str());
+}
+
+const static strcmd install("install", "install", "安装", 0, [] (auto args) {
+    uid_t uid = getuid();
+    if (setuid(0)) {
+        cerr << "安装失败，无法获取root权限。" << endl;
+        return;
+    }
+
+    char selfPath[1024];
+    int len;
+    if ((len = readlink("/proc/self/exe", selfPath, sizeof(selfPath))) <= 0) {
+        cerr << "安装失败，无法获取自身位置。" << endl;
+        return;
+    }
+    selfPath[len] = 0;
+    string programPath(selfPath);
+
+    replace_all(programPath, " ", "\\ ");
+    string cpCmd = "cp " + programPath + " /usr/local/bin/fpw";
+    if (call_shell(cpCmd)) {
+        cerr << "安装失败，无法将自身拷贝到 /usr/local/bin/fpw。" << endl;
+        return;
+    }
+
+    cout << "$ vi /usr/lib/systemd/system/fpw.service" << endl;
+
+    INIFile systemd("/usr/lib/systemd/system/fpw.service");
+    systemd.getMust("Unit")->set("Description", "FRPCWebUI Daemon");
+    systemd.getMust("Unit")->set("After", "network.target");
+    systemd.getMust("Service")->set("Type", "Simple");
+    systemd.getMust("Service")->set("User", "root");
+    systemd.getMust("Service")->set("Restart", "on-failure");
+    systemd.getMust("Service")->set("RestartSec", "1s");
+    systemd.getMust("Service")->set("ExecStart", "fpw");
+    systemd.getMust("Service")->set("LimitNOFILE", "1048576");
+    systemd.getMust("Install")->set("WantedBy", "multi-user.target");
+    systemd.save();
+
+    if (call_shell("systemctl daemon-reload")) {
+        cerr << "安装失败，无法调用systemctl。" << endl;
+        return;
+    }
+    if (call_shell("systemctl enable fpw")) {
+        cerr << "安装失败，无法调用systemctl。" << endl;
+        return;
+    }
+    if (call_shell("systemctl start fpw")) {
+        cerr << "安装失败，无法调用systemctl。" << endl;
+        return;
+    }
+
+    setuid(uid);
+    cout << "安装成功。" << endl;
+});
+
 int main(int argc, char **argv) {
     std::cout << "FRPC WebUI HelloWorld!" << std::endl;
     CommandLineWorker cmdLine;

@@ -12,7 +12,7 @@ namespace xc::utils {
         ifstream fin(filePath);
         if (fin.fail()) {
             cerr << "[FileIOError]: Read Error " << ::strerror(errno) << endl;
-            return "404";
+            return "";
         }
         stringstream buffer;
         buffer << fin.rdbuf();

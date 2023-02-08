@@ -3,6 +3,7 @@
 //
 
 #include "FileResponseData.h"
+#include "strop.h"
 
 using namespace std;
 
@@ -31,16 +32,6 @@ namespace xc {
         void FileResponseData::setFilePath(string filePath) {
             this->filePath = filePath;
             this->setBody(contentsOfTextFile(filePath));
-        }
-
-        string& replace_all(string& src, const string& old_value, const string& new_value) {
-            for (string::size_type pos(0); pos != string::npos; pos += new_value.length()) {
-                if ((pos = src.find(old_value, pos)) != string::npos) {
-                    src.replace(pos, old_value.length(), new_value);
-                }
-                else break;
-            }
-            return src;
         }
 
         void FileResponseData::setFilePath(string filePath, vector<Replacement> replacements) {
