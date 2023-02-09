@@ -30,19 +30,20 @@
 4. 执行 `sudo ./fpw install`，将此项目安装到 `/usr/local/bin` 中，并自动配置服务和开机启动。
 5. 到目前为止，您已经成功的安装了FRPCWebUI。您可以删除下载的fpw文件，然后参考下一节配置账号与配置文件。
 ### 使用源代码编译
-1. 克隆此项目到您的服务器上
+1. 下载frpc的最新版本可执行文件，并将frpc可执行文件拷贝到 `/usr/local/bin/frpc` 或 `/usr/bin/frpc` 。
+2. 克隆此项目到您的服务器上
     ``` sh
     git clone https://github.com/XCBOSA/frp-webui-5MB.git
     cd frp-webui-5MB
     ```
-2. 您可以修改webuiconf.h文件中的硬编码配置值，如果不需要修改请继续。注意：强烈建议您修改 `userPasswordSalt` 的值，这将保护用户的密码安全。
-3. 编译
+3. 您可以修改webuiconf.h文件中的硬编码配置值，如果不需要修改请继续。注意：强烈建议您修改 `userPasswordSalt` 的值，这将保护用户的密码安全。
+4. 编译
     ``` sh
     cmake .
     make -j64
     cp FRPCWebUI /usr/local/bin/fpw
     ```
-4. 如果您想使用systemd，请执行 `fpw install` 来写入服务配置文件并配置自启动；否则，您可以使用任何工具，使得fpw开机启动。
+5. 如果您想使用systemd，请执行 `fpw install` 来写入服务配置文件并配置自启动；否则，您可以使用任何工具，使得fpw开机启动。
 
 ### 配置账号与配置文件
 
