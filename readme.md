@@ -1,6 +1,8 @@
 # FRPC-WebUI-5MB
 在5MB的内存 / 硬盘下，实现FRPC的管理界面。此项目实现了最简单的多线程HTTP服务器与单线程请求处理服务器，并在实现中尽可能的降低内存消耗。
 
+此项目也包含一个非常有趣的C++模版引擎，可以去看看Controller目录。
+
 ![screen-shot](https://github.com/XCBOSA/frp-webui-5MB/blob/6879d14d89ef75c38c19e25954408eec5faf5433/screen-shot.jpeg)
 
 ## 支持的操作系统：
