@@ -1,6 +1,8 @@
 # FRPC-WebUI-5MB
 在5MB的内存 / 硬盘下，实现FRPC的管理界面。此项目实现了最简单的多线程HTTP服务器与单线程请求处理服务器，并在实现中尽可能的降低内存消耗。
 
+此项目也包含一个非常有趣的C++模版引擎，可以去看看Controller目录。
+
 ![screen-shot](https://github.com/XCBOSA/frp-webui-5MB/blob/6879d14d89ef75c38c19e25954408eec5faf5433/screen-shot.jpeg)
 
 ## 支持的操作系统：
@@ -28,19 +30,20 @@
 4. 执行 `sudo ./fpw install`，将此项目安装到 `/usr/local/bin` 中，并自动配置服务和开机启动。
 5. 到目前为止，您已经成功的安装了FRPCWebUI。您可以删除下载的fpw文件，然后参考下一节配置账号与配置文件。
 ### 使用源代码编译
-1. 克隆此项目到您的服务器上
+1. 下载frpc的最新版本可执行文件，并将frpc可执行文件拷贝到 `/usr/local/bin/frpc` 或 `/usr/bin/frpc` 。
+2. 克隆此项目到您的服务器上
     ``` sh
     git clone https://github.com/XCBOSA/frp-webui-5MB.git
     cd frp-webui-5MB
     ```
-2. 您可以修改webuiconf.h文件中的硬编码配置值，如果不需要修改请继续。注意：强烈建议您修改 `userPasswordSalt` 的值，这将保护用户的密码安全。
-3. 编译
+3. 您可以修改webuiconf.h文件中的硬编码配置值，如果不需要修改请继续。注意：强烈建议您修改 `userPasswordSalt` 的值，这将保护用户的密码安全。
+4. 编译
     ``` sh
     cmake .
     make -j64
     cp FRPCWebUI /usr/local/bin/fpw
     ```
-4. 如果您想使用systemd，请执行 `fpw install` 来写入服务配置文件并配置自启动；否则，您可以使用任何工具，使得fpw开机启动。
+5. 如果您想使用systemd，请执行 `fpw install` 来写入服务配置文件并配置自启动；否则，您可以使用任何工具，使得fpw开机启动。
 
 ### 配置账号与配置文件
 
@@ -61,7 +64,7 @@
 3. 为用户指定其可以使用的配置文件
 
     ```
-    assign <用户名> <配置文件名字>
+    fpw assign <用户名> <配置文件名字>
     ```
 
 4. 在浏览器中登陆 服务器地址:8192 ，开始配置端口吧。
