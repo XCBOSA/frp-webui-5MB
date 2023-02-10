@@ -35,7 +35,7 @@ namespace xc {
 
             this->clRead = clRead;
             this->clWrite = clWrite;
-            char *requestBuff = (char *)::malloc(urlRequestBuffSize);
+            char *requestBuff = (char *)::calloc(1, urlRequestBuffSize);
             this->requestBuff = requestBuff;
 
             ::fgets(requestBuff, urlRequestBuffSize, clRead);
@@ -62,66 +62,22 @@ namespace xc {
                 map<string, string> headers;
                 ostringstream body;
 
-                bool isHeader = true;
-                bool lastLineIsEmpty = false;
-                bool lastLineEmptyAndZero = false;
                 while (bzero(requestBuff, urlRequestBuffSize), ::fgets(requestBuff, urlRequestBuffSize, clRead)) {
-                    if (method == "GET") {
-                        if (strcmp(requestBuff, "\r\n") == 0) {
-                            break;
-                        }
+                    string line(requestBuff);
+
+                    replace_all(line, "\r\n", "");
+                    trim(line);
+                    if (line.length() == 0) {
+                        break; // TODO: POST Body not read.
                     }
-                    int len = ::strlen(requestBuff);
-                    char *lineBuff = (char *) ::malloc(len + 1), *pLineBuff = lineBuff;
-                    bool leftHasContext = false;
-                    for (int i = 0; i < len; i++) {
-                        if (requestBuff[i] == '\r' || requestBuff[i] == '\n') continue;
-                        if (requestBuff[i] == ' ' || requestBuff[i] == '\t') {
-                            if (leftHasContext) {
-                                *pLineBuff++ = requestBuff[i];
-                            }
-                        } else {
-                            leftHasContext = true;
-                            *pLineBuff++ = requestBuff[i];
-                        }
+
+                    auto lineParts = split(line, ":");
+                    for (auto &it : lineParts) {
+                        trim(it);
                     }
-                    if (leftHasContext) {
-                        pLineBuff--;
-                        while (pLineBuff >= lineBuff && (*pLineBuff == ' ' || *pLineBuff == '\t')) {
-                            *pLineBuff = 0; // 从右往左，删掉右边的空白符
-                            pLineBuff--;
-                        }
-                    }
-                    if (::strlen(lineBuff) == 0) {
-                        // TODO: Fix Linux POST Method
-                        isHeader = false;
-                        lastLineIsEmpty = true;
-                        if (lastLineEmptyAndZero) {
-                            break;
-                        } else {
-                            lastLineEmptyAndZero = false;
-                        }
-                        if (method == "GET") {
-                            break;
-                        }
-                        continue;
-                    }
-                    if (lineBuff[0] == '0') {
-                        if (lastLineIsEmpty) {
-                            lastLineEmptyAndZero = true;
-                            lastLineIsEmpty = false;
-                        }
-                    }
-                    if (isHeader) {
-                        char *headerValue;
-                        char *headerName = strtok_r(lineBuff, ":", &headerValue);
-                        if (headerName != nullptr && headerValue != nullptr) {
-                            string name(headerName);
-                            string value(headerValue);
-                            headers[name] = value;
-                        }
-                    } else {
-                        body << lineBuff << endl;
+
+                    if (lineParts.size() == 2) {
+                        headers[lineParts[0]] = lineParts[1];
                     }
                 }
 

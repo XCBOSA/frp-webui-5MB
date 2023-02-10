@@ -16,7 +16,8 @@ using namespace configor;
 namespace xc::controller {
 
     ResponseData *EntryController(RequestData request) {
-        bool isUserLogin = user::isLogin(request.getCookie("Token"));
+        string cookieToken = request.getCookie("Token");
+        bool isUserLogin = user::isLogin(cookieToken);
         auto resp = new TemplateResponseData({
             If(isUserLogin, {
                 ContentGeneratorReference("PortListController", request)

@@ -63,7 +63,6 @@ namespace xc {
                     oss << it.first;
                     oss << "=";
                     oss << it.second;
-                    oss << "; Path=/";
                     string str = oss.str();
                     ::fprintf(fp, "%s: %s\r\n", "Set-Cookie", str.c_str());
                 }

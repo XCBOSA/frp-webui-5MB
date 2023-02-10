@@ -138,6 +138,6 @@ int main(int argc, char **argv) {
     cmdLine.workerLoop();
 
     while (true) {
-        sleep(1000);
+        sleep(1);
     }
 }
